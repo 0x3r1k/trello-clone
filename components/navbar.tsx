@@ -1,8 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { Session } from "better-auth";
 
+import { Session } from "@/lib/auth";
 import { Button } from "@/components/ui/button";
 import LogoutButton from "@/components/logout-button";
 
