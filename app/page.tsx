@@ -1,7 +1,15 @@
-export default function Home() {
+import { auth } from "@/lib/auth";
+import { headers } from "next/headers";
+
+export default async function Page() {
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
+
   return (
-    <div className="container mx-auto">
-      <h1 className="text-4xl font-bold text-center my-8">Hello World</h1>
+    <div>
+      <h1>Page</h1>
+      <p>Session: {JSON.stringify(session)}</p>
     </div>
   );
 }
