@@ -17,6 +17,16 @@ export default async function ProfilePage() {
         </CardHeader>
 
         <CardContent>
+          {session.user.emailVerified === false && (
+            <div className="bg-yellow-100 border-l-4 border-yellow-500 p-4 mb-4">
+              <p className="font-bold">Email not verified</p>
+              <p>
+                Your email address has not been verified. Please check your
+                inbox for a verification email.
+              </p>
+            </div>
+          )}
+
           <ProfileForm session={session} />
         </CardContent>
       </Card>

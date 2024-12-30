@@ -3,21 +3,29 @@ import { Button } from "@/components/ui/button";
 export default function LoadingButton({
   pending,
   variant,
+  type,
   children,
   onClick,
+  className,
 }: {
   pending: boolean;
-  variant?: "destructive";
+  variant?: "outline" | "destructive";
+  type?: "button" | "submit";
   children: React.ReactNode;
   onClick?: () => void;
+  className?: string | boolean;
 }) {
   return (
     <Button
-      type="submit"
-      className="w-full"
+      type={type ?? "submit"}
       variant={variant ?? "default"}
       onClick={onClick}
       disabled={pending}
+      {...(typeof className === "string"
+        ? { className }
+        : typeof className === "boolean"
+        ? {}
+        : { className: "w-full" })}
     >
       {pending ? (
         <div className="flex items-center justify-center">

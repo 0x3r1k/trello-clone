@@ -10,6 +10,12 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import LoadingButton from "@/components/loading-button";
 
 import { useForm } from "react-hook-form";
@@ -21,6 +27,7 @@ import { Session } from "@/lib/auth";
 import { authClient } from "@/lib/auth-client";
 import { useToast } from "@/hooks/use-toast";
 import { useRouter } from "next/navigation";
+import { IconBrandGmail } from "@tabler/icons-react";
 
 export function ProfileForm({ session }: { session: Session }) {
   const router = useRouter();
@@ -28,6 +35,7 @@ export function ProfileForm({ session }: { session: Session }) {
 
   const [pending, setPending] = useState(false);
   const [passwordPending, setPasswordPending] = useState(false);
+  const [emailPending, setEmailPending] = useState(false);
 
   const form = useForm<z.infer<typeof updateProfileSchema>>({
     resolver: zodResolver(updateProfileSchema),
@@ -88,37 +96,98 @@ export function ProfileForm({ session }: { session: Session }) {
     setPasswordPending(false);
   };
 
+  const onResendVerificationEmail = async () => {
+    setEmailPending(true);
+
+    const { error } = await authClient.sendVerificationEmail({
+      email: session.user.email,
+    });
+
+    if (error) {
+      toast({
+        title: "Something went wrong",
+        description: error.message ?? "Something went wrong.",
+        variant: "destructive",
+      });
+    } else {
+      toast({
+        title: "Verification email sent",
+        description: "A verification email has been sent to your inbox.",
+      });
+    }
+
+    setEmailPending(false);
+  };
+
   return (
     <>
       <Form {...form}>
         <form className="space-y-4" onSubmit={form.handleSubmit(onSubmit)}>
           {["name", "email", "image"].map((field) => (
-            <FormField
-              control={form.control}
+            <div
+              className={
+                field === "email"
+                  ? "flex flex-row justify-center items-end space-x-2 w-full"
+                  : ""
+              }
               key={field}
-              name={field as keyof z.infer<typeof updateProfileSchema>}
-              render={({ field: fieldProps }) => (
-                <FormItem>
-                  <FormLabel>
-                    {field.charAt(0).toUpperCase() + field.slice(1)}
-                  </FormLabel>
+            >
+              <FormField
+                control={form.control}
+                name={field as keyof z.infer<typeof updateProfileSchema>}
+                render={({ field: fieldProps }) => (
+                  <FormItem className="w-full">
+                    <FormLabel>
+                      {field.charAt(0).toUpperCase() + field.slice(1)}
+                    </FormLabel>
 
-                  <FormControl>
-                    <Input
-                      type={field === "email" ? "email" : "text"}
-                      readOnly={field === "email"}
-                      placeholder={`Enter your ${field}`}
-                      autoComplete="off"
-                      {...fieldProps}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
+                    <FormControl>
+                      <Input
+                        type={
+                          field === "email"
+                            ? "email"
+                            : field === "image"
+                            ? "url"
+                            : "text"
+                        }
+                        readOnly={field === "email"}
+                        disabled={session.user.emailVerified === false}
+                        placeholder={`Enter your ${field}`}
+                        autoComplete="off"
+                        {...fieldProps}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              {field === "email" && session.user.emailVerified === false && (
+                <TooltipProvider>
+                  <Tooltip open>
+                    <TooltipTrigger asChild>
+                      <LoadingButton
+                        type="button"
+                        onClick={onResendVerificationEmail}
+                        pending={emailPending}
+                        className={false}
+                      >
+                        <IconBrandGmail className="w-6 h-6" />
+                      </LoadingButton>
+                    </TooltipTrigger>
+
+                    <TooltipContent>
+                      <p>Resend verification mail</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
               )}
-            />
+            </div>
           ))}
 
-          <LoadingButton pending={pending}>Update settings</LoadingButton>
+          {session.user.emailVerified === true && (
+            <LoadingButton pending={pending}>Save changes</LoadingButton>
+          )}
         </form>
       </Form>
 
