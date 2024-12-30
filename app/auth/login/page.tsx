@@ -25,13 +25,15 @@ import { signInSchema } from "@/lib/zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { IconBrandGoogle } from "@tabler/icons-react";
+import { IconBrandGithub, IconBrandGoogle } from "@tabler/icons-react";
 
 export default function SignInPage() {
   const router = useRouter();
   const { toast } = useToast();
 
   const [pending, setPending] = useState(false);
+  const [pendingGoogle, setPendingGoogle] = useState(false);
+  const [pendingGithub, setPendingGithub] = useState(false);
 
   const form = useForm<z.infer<typeof signInSchema>>({
     resolver: zodResolver(signInSchema),
@@ -76,7 +78,7 @@ export default function SignInPage() {
         provider: "google",
       },
       {
-        onRequest: () => setPending(true),
+        onRequest: () => setPendingGoogle(true),
         onSuccess: async () => {
           router.push("/");
           router.refresh();
@@ -92,6 +94,34 @@ export default function SignInPage() {
         },
       }
     );
+
+    setPendingGoogle(false);
+  };
+
+  const handleGithubSignIn = async () => {
+    await authClient.signIn.social(
+      {
+        provider: "github",
+      },
+      {
+        onRequest: () => setPendingGithub(true),
+        onSuccess: async () => {
+          router.push("/");
+          router.refresh();
+        },
+        onError: (ctx: ErrorContext) => {
+          console.log(ctx);
+
+          toast({
+            title: "Something went wrong",
+            description: ctx.error.message ?? "Something went wrong.",
+            variant: "destructive",
+          });
+        },
+      }
+    );
+
+    setPendingGithub(false);
   };
 
   return (
@@ -102,10 +132,15 @@ export default function SignInPage() {
         </CardHeader>
 
         <CardContent>
-          <div className="mb-2">
-            <LoadingButton pending={pending} onClick={handleGoogleSignIn}>
+          <div className="flex flex-col items-center justify-center gap-2 mb-2">
+            <LoadingButton pending={pendingGoogle} onClick={handleGoogleSignIn}>
               <IconBrandGoogle className="w-4 h-4" />
               Continue with Google
+            </LoadingButton>
+
+            <LoadingButton pending={pendingGithub} onClick={handleGithubSignIn}>
+              <IconBrandGithub className="w-4 h-4" />
+              Continue with Github
             </LoadingButton>
           </div>
 

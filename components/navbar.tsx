@@ -59,7 +59,6 @@ export default function Navbar({ session }: { session: Session | null }) {
           <div className="md:hidden">
             <Sheet open={isOpen} onOpenChange={setIsOpen}>
               <SheetTitle>
-                {" "}
                 <SheetTrigger asChild>
                   <Button variant="ghost" size="icon">
                     <Menu className="h-6 w-6" />

@@ -2,10 +2,12 @@ import { Button } from "@/components/ui/button";
 
 export default function LoadingButton({
   pending,
+  variant,
   children,
   onClick,
 }: {
   pending: boolean;
+  variant?: "destructive";
   children: React.ReactNode;
   onClick?: () => void;
 }) {
@@ -13,6 +15,7 @@ export default function LoadingButton({
     <Button
       type="submit"
       className="w-full"
+      variant={variant ?? "default"}
       onClick={onClick}
       disabled={pending}
     >

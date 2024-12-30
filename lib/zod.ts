@@ -45,5 +45,5 @@ export const changePasswordSchema = object({
 export const updateProfileSchema = object({
   name: getNameSchema(),
   email: getEmailSchema(),
-  image: string(),
+  image: string().optional(),
 });
