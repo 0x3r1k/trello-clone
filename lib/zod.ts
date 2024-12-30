@@ -41,3 +41,9 @@ export const changePasswordSchema = object({
   message: "Passwords do not match",
   path: ["confirmPassword"],
 });
+
+export const updateProfileSchema = object({
+  name: getNameSchema(),
+  email: getEmailSchema(),
+  image: string(),
+});

@@ -2,11 +2,14 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-
 import { authClient } from "@/lib/auth-client";
-import LoadingButton from "@/components/loading-button";
+import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
 
-export default function LogoutButton() {
+export default function LogoutButton({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   const router = useRouter();
   const [pending, setPending] = useState(false);
 
@@ -30,8 +33,12 @@ export default function LogoutButton() {
   };
 
   return (
-    <LoadingButton onClick={handleLogout} pending={pending}>
-      Logout
-    </LoadingButton>
+    <DropdownMenuItem
+      className="cursor-pointer"
+      onClick={handleLogout}
+      disabled={pending}
+    >
+      {children}
+    </DropdownMenuItem>
   );
 }

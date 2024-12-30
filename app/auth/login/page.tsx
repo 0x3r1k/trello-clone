@@ -111,13 +111,15 @@ export default function SignInPage() {
 
           <div className="flex flex-row justify-between items-center gap-2">
             <div className="w-full h-[0.5px] bg-primary" />
-            <span className="text-primary text-center">or</span>
+            <span className="text-primary text-center text-sm font-light">
+              OR
+            </span>
             <div className="w-full h-[0.5px] bg-primary" />
           </div>
 
           <Form {...form}>
             <form
-              className="space-y-6"
+              className="space-y-4"
               onSubmit={form.handleSubmit(handleCredentialsSignIn)}
             >
               {["email", "password"].map((field) => (

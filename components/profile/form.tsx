@@ -1,3 +1,6 @@
+"use client";
+
+import { useState } from "react";
 import {
   Form,
   FormControl,
@@ -11,25 +14,27 @@ import { Input } from "@/components/ui/input";
 import LoadingButton from "@/components/loading-button";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { signUpSchema } from "@/lib/zod";
+import { updateProfileSchema } from "@/lib/zod";
 import { z } from "zod";
+import { Session } from "@/lib/auth";
 
-export function SignUpForm({
-  onSubmit,
-  pending,
-}: {
-  onSubmit: (values: z.infer<typeof signUpSchema>) => void;
-  pending: boolean;
-}) {
-  const form = useForm<z.infer<typeof signUpSchema>>({
-    resolver: zodResolver(signUpSchema),
+export function ProfileForm({ session }: { session: Session }) {
+  const [pending, setPending] = useState(false);
+
+  const form = useForm<z.infer<typeof updateProfileSchema>>({
+    resolver: zodResolver(updateProfileSchema),
     defaultValues: {
-      name: "",
-      email: "",
-      password: "",
-      confirmPassword: "",
+      name: session.user.name ?? "",
+      email: session.user.email,
+      image: session.user.image ?? "",
     },
   });
+
+  const onSubmit = async (data: z.infer<typeof updateProfileSchema>) => {
+    setPending(true);
+
+    console.log(data);
+  };
 
   return (
     <Form {...form}>
@@ -38,7 +43,7 @@ export function SignUpForm({
           <FormField
             control={form.control}
             key={field}
-            name={field as keyof z.infer<typeof signUpSchema>}
+            name={field as keyof z.infer<typeof updateProfileSchema>}
             render={({ field: fieldProps }) => (
               <FormItem>
                 <FormLabel>
@@ -47,16 +52,11 @@ export function SignUpForm({
 
                 <FormControl>
                   <Input
-                    type={
-                      field.includes("password")
-                        ? "password"
-                        : field === "email"
-                        ? "email"
-                        : "text"
-                    }
+                    type={field === "email" ? "email" : "text"}
+                    readOnly={field === "email"}
                     placeholder={`Enter your ${field}`}
-                    {...fieldProps}
                     autoComplete="off"
+                    {...fieldProps}
                   />
                 </FormControl>
                 <FormMessage />

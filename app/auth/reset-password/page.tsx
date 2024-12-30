@@ -60,9 +60,7 @@ export default function ResetPasswordPage() {
     <div className="grow flex items-center justify-center p-4">
       <Card className="w-full max-w-md">
         <CardHeader>
-          <CardTitle className="text-xl font-bold text-center text-gray-800">
-            Reset password
-          </CardTitle>
+          <CardTitle className="text-xl">Reset password</CardTitle>
         </CardHeader>
 
         <CardContent>
