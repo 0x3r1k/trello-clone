@@ -47,62 +47,66 @@ export default function Navbar({ session }: { session: Session | null }) {
           <span>Trello App</span>
         </Link>
 
-        <div className="hidden md:flex items-center gap-2">
-          <NavItems />
-        </div>
-      </div>
-
-      <div className="md:hidden">
-        <Sheet open={isOpen} onOpenChange={setIsOpen}>
-          <SheetTitle>
-            {" "}
-            <SheetTrigger asChild>
-              <Button variant="ghost" size="icon">
-                <Menu className="h-6 w-6" />
-              </Button>
-            </SheetTrigger>
-          </SheetTitle>
-
-          <SheetContent side="right" className="w-[300px] sm:w-[400px]">
-            <div className="flex flex-col gap-4 mt-6">
-              <NavItems />
-            </div>
-          </SheetContent>
-        </Sheet>
+        {session && (
+          <div className="hidden md:flex items-center gap-2">
+            <NavItems />
+          </div>
+        )}
       </div>
 
       {session ? (
-        <div className="flex items-center gap-2">
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Avatar className="cursor-pointer">
-                <AvatarImage
-                  src={session.user.image || undefined}
-                  alt={session.user.name || "User avatar"}
-                />
+        <>
+          <div className="md:hidden">
+            <Sheet open={isOpen} onOpenChange={setIsOpen}>
+              <SheetTitle>
+                {" "}
+                <SheetTrigger asChild>
+                  <Button variant="ghost" size="icon">
+                    <Menu className="h-6 w-6" />
+                  </Button>
+                </SheetTrigger>
+              </SheetTitle>
 
-                <AvatarFallback className="bg-primary text-white">
-                  {session.user.name?.[0] || "U"}
-                </AvatarFallback>
-              </Avatar>
-            </DropdownMenuTrigger>
+              <SheetContent side="right" className="w-[300px] sm:w-[400px]">
+                <div className="flex flex-col gap-4 mt-6">
+                  <NavItems />
+                </div>
+              </SheetContent>
+            </Sheet>
+          </div>
 
-            <DropdownMenuContent align="end">
-              <DropdownMenuLabel>My Account</DropdownMenuLabel>
-              <DropdownMenuSeparator />
+          <div className="flex items-center gap-2">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Avatar className="cursor-pointer">
+                  <AvatarImage
+                    src={session.user.image || undefined}
+                    alt={session.user.name || "User avatar"}
+                  />
 
-              <ProfileButton>
-                <User className="h-4 w-4" />
-                <span>Profile</span>
-              </ProfileButton>
+                  <AvatarFallback className="bg-primary text-white">
+                    {session.user.name?.[0] || "U"}
+                  </AvatarFallback>
+                </Avatar>
+              </DropdownMenuTrigger>
 
-              <LogoutButton>
-                <LogOut className="h-4 w-4" />
-                <span>Logout</span>
-              </LogoutButton>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </div>
+              <DropdownMenuContent align="end">
+                <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+
+                <ProfileButton>
+                  <User className="h-4 w-4" />
+                  <span>Profile</span>
+                </ProfileButton>
+
+                <LogoutButton>
+                  <LogOut className="h-4 w-4" />
+                  <span>Logout</span>
+                </LogoutButton>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+        </>
       ) : (
         <div className="hidden md:flex items-center gap-2">
           <Link href="/auth/login">
