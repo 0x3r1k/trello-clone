@@ -14,10 +14,28 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 import LogoutButton from "@/components/logout-button";
-import { LogOut, Trello, User } from "lucide-react";
+import { LogOut, Trello, User, Menu } from "lucide-react";
 import ProfileButton from "./profile-button";
+import { useState } from "react";
+import {
+  Sheet,
+  SheetContent,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
 
 export default function Navbar({ session }: { session: Session | null }) {
+  const [isOpen, setIsOpen] = useState(false);
+
+  const NavItems = () => (
+    <Link
+      href="/boards"
+      className="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-blue-100 hover:text-blue-800 transition-colors"
+    >
+      Boards
+    </Link>
+  );
+
   return (
     <nav className="flex justify-between items-center py-3 px-4 fixed top-0 left-0 right-0 z-50 bg-slate-100">
       <div className="flex items-center gap-4">
@@ -29,12 +47,28 @@ export default function Navbar({ session }: { session: Session | null }) {
           <span>Trello App</span>
         </Link>
 
-        <Link
-          href="/boards"
-          className="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-blue-100 hover:text-blue-800 transition-colors"
-        >
-          Boards
-        </Link>
+        <div className="hidden md:flex items-center gap-2">
+          <NavItems />
+        </div>
+      </div>
+
+      <div className="md:hidden">
+        <Sheet open={isOpen} onOpenChange={setIsOpen}>
+          <SheetTitle>
+            {" "}
+            <SheetTrigger asChild>
+              <Button variant="ghost" size="icon">
+                <Menu className="h-6 w-6" />
+              </Button>
+            </SheetTrigger>
+          </SheetTitle>
+
+          <SheetContent side="right" className="w-[300px] sm:w-[400px]">
+            <div className="flex flex-col gap-4 mt-6">
+              <NavItems />
+            </div>
+          </SheetContent>
+        </Sheet>
       </div>
 
       {session ? (
@@ -70,7 +104,7 @@ export default function Navbar({ session }: { session: Session | null }) {
           </DropdownMenu>
         </div>
       ) : (
-        <div className="flex gap-2 justify-center">
+        <div className="hidden md:flex items-center gap-2">
           <Link href="/auth/login">
             <Button variant="default">Sign In</Button>
           </Link>
