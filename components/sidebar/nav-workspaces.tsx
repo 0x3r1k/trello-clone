@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/collapsible";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { usePathname } from "next/navigation";
+import Link from "next/link";
 
 const workspacesData = [
   {
@@ -28,6 +29,29 @@ const workspacesData = [
   },
 ];
 
+function Card({
+  item,
+}: {
+  item: {
+    name: string;
+    image?: string;
+  };
+}) {
+  return (
+    <div className="flex items-center space-x-2">
+      <Avatar className="h-8 w-8 rounded-lg">
+        <AvatarImage src={item.image ?? undefined} alt={item.name} />
+
+        <AvatarFallback className="rounded-lg bg-sidebar-foreground/10 text-sidebar-foreground">
+          {item.name[0]}
+        </AvatarFallback>
+      </Avatar>
+
+      <span className="truncate text-sm">{item.name}</span>
+    </div>
+  );
+}
+
 export function NavWorkspaces() {
   const pathname = usePathname();
   const { state } = useSidebar();
@@ -37,6 +61,7 @@ export function NavWorkspaces() {
       {state === "expanded" && (
         <SidebarGroupLabel>Workspaces</SidebarGroupLabel>
       )}
+
       <SidebarMenu>
         {workspacesData.map((item) => (
           <Collapsible
@@ -51,20 +76,13 @@ export function NavWorkspaces() {
                   tooltip={item.name}
                   isActive={pathname.includes(`/workspace/${item.id}`)}
                 >
-                  <div className="flex items-center space-x-2">
-                    <Avatar className="h-8 w-8 rounded-lg">
-                      <AvatarImage
-                        src={item.image ?? undefined}
-                        alt={item.name}
-                      />
-
-                      <AvatarFallback className="rounded-lg bg-sidebar-foreground/10 text-sidebar-foreground">
-                        {item.name[0]}
-                      </AvatarFallback>
-                    </Avatar>
-
-                    <span className="truncate text-sm">{item.name}</span>
-                  </div>
+                  {state === "collapsed" ? (
+                    <Link href={`/workspace/${item.id}`}>
+                      <Card item={item} />
+                    </Link>
+                  ) : (
+                    <Card item={item} />
+                  )}
                 </SidebarMenuButton>
               </CollapsibleTrigger>
 

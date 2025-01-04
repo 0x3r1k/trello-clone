@@ -15,6 +15,8 @@ export default function BreadcrumbClient() {
   const pathsAndIds = pathname.split("/").slice(1);
   const paths = pathsAndIds.filter((path) => isNaN(parseInt(path)));
 
+  console.log(paths);
+
   return (
     <Breadcrumb>
       <BreadcrumbList>
@@ -29,6 +31,7 @@ export default function BreadcrumbClient() {
                 {path}
               </BreadcrumbLink>
             </BreadcrumbItem>
+
             {index < paths.length - 1 && (
               <BreadcrumbSeparator className="hidden md:block" />
             )}
