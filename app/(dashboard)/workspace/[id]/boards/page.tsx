@@ -1,13 +1,11 @@
-export default function WorkspaceBoardsPage({
+export default async function WorkspaceBoardsPage({
   params,
 }: {
-  params: {
-    id: string;
-  };
+  params: Promise<{ id: string }>;
 }) {
   return (
     <div>
-      <h1>Workspace Boards Page ({params.id})</h1>
+      <h1>Workspace Boards Page ({(await params).id})</h1>
     </div>
   );
 }
