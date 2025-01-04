@@ -11,6 +11,7 @@ const items = [
   {
     title: "Boards",
     icon: IconLayoutBoard,
+    href: "/boards",
   },
 ];
 
@@ -21,10 +22,10 @@ export function NavMain() {
     <SidebarMenu className="mb-2">
       {items.map((item) => (
         <SidebarMenuItem key={item.title}>
-          <Link href="/boards">
+          <Link href={item.href}>
             <SidebarMenuButton
               tooltip={item.title}
-              isActive={pathname === "/boards"}
+              isActive={pathname === item.href}
             >
               {item.icon && <item.icon />}
               <span>{item.title}</span>
