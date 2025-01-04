@@ -7,6 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -44,7 +45,7 @@ export default function SignInPage() {
   });
 
   const handleCredentialsSignIn = async (
-    values: z.infer<typeof signInSchema>
+    values: z.infer<typeof signInSchema>,
   ) => {
     await authClient.signIn.email(
       {
@@ -66,7 +67,7 @@ export default function SignInPage() {
             variant: "destructive",
           });
         },
-      }
+      },
     );
 
     setPending(false);
@@ -92,7 +93,7 @@ export default function SignInPage() {
             variant: "destructive",
           });
         },
-      }
+      },
     );
 
     setPendingGoogle(false);
@@ -118,14 +119,14 @@ export default function SignInPage() {
             variant: "destructive",
           });
         },
-      }
+      },
     );
 
     setPendingGithub(false);
   };
 
   return (
-    <div className="grow flex items-center justify-center p-4">
+    <div className="grow flex items-center justify-center p-4 min-h-screen">
       <Card className="w-full max-w-md">
         <CardHeader>
           <CardTitle className="text-xl">Sign In</CardTitle>
@@ -179,6 +180,17 @@ export default function SignInPage() {
                         />
                       </FormControl>
 
+                      {field === "password" && (
+                        <FormDescription>
+                          <Link
+                            href="/auth/reset-password"
+                            className="text-blue-500 hover:underline"
+                          >
+                            Forgot your password?
+                          </Link>
+                        </FormDescription>
+                      )}
+
                       <FormMessage />
                     </FormItem>
                   )}
@@ -191,10 +203,10 @@ export default function SignInPage() {
 
           <div className="mt-4 text-center text-sm">
             <Link
-              href="/auth/reset-password"
-              className="text-blue-500 hover:underline"
+              href="/auth/register"
+              className="text-primary hover:underline"
             >
-              Forgot your password?
+              Don{"'"}t have an account? Sign up.
             </Link>
           </div>
         </CardContent>

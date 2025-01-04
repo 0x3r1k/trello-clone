@@ -65,7 +65,7 @@ function ResetPasswordContent() {
 
   if (error === "invalid_token") {
     return (
-      <div className="grow flex items-center justify-center p-4">
+      <div className="grow flex items-center justify-center p-4 min-h-screen">
         <Card className="w-full max-w-md">
           <CardHeader>
             <CardTitle className="text-xl font-bold text-center text-gray-800">

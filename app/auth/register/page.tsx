@@ -45,14 +45,14 @@ export default function SignUpPage() {
           console.log("Error using signUp function", ctx);
           setSuccess(false);
         },
-      }
+      },
     );
 
     setPending(false);
   };
 
   return (
-    <div className="grow flex items-center justify-center p-4">
+    <div className="grow flex items-center justify-center p-4 min-h-screen">
       <Card className="w-full max-w-md">
         <CardHeader>
           <CardTitle className="text-xl">Sign Up</CardTitle>

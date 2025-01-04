@@ -57,7 +57,7 @@ export default function ResetPasswordPage() {
   };
 
   return (
-    <div className="grow flex items-center justify-center p-4">
+    <div className="grow flex items-center justify-center p-4 min-h-screen">
       <Card className="w-full max-w-md">
         <CardHeader>
           <CardTitle className="text-xl">Reset password</CardTitle>
@@ -90,6 +90,15 @@ export default function ResetPasswordPage() {
               </LoadingButton>
             </form>
           </Form>
+
+          <div className="mt-4 text-center text-sm">
+            <p className="text-gray-600">
+              Remembered your password?{" "}
+              <a href="/auth/login" className="text-blue-500 hover:underline">
+                Sign in
+              </a>
+            </p>
+          </div>
         </CardContent>
       </Card>
     </div>

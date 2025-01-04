@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
 import "./globals.css";
 
-import Navbar from "@/components/navbar";
+// import Navbar from "@/components/navbar";
 import { Toaster } from "@/components/ui/toaster";
 
-import { auth } from "@/lib/auth";
-import { headers } from "next/headers";
+/* import { auth } from "@/lib/auth";
+import { headers } from "next/headers"; */
 
 export const metadata: Metadata = {
   title: "Trello Clone",
@@ -17,17 +17,16 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const session = await auth.api.getSession({
+  /* const session = await auth.api.getSession({
     headers: await headers(),
-  });
+  }); */
 
   return (
     <html lang="en">
       <body>
         <Toaster />
-        <Navbar session={session} />
 
-        <div className="min-h-screen pt-20 flex flex-col">{children}</div>
+        <main className="min-h-screen">{children}</main>
       </body>
     </html>
   );
