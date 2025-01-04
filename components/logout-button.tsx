@@ -33,11 +33,7 @@ export default function LogoutButton({
   };
 
   return (
-    <DropdownMenuItem
-      className="cursor-pointer"
-      onClick={handleLogout}
-      disabled={pending}
-    >
+    <DropdownMenuItem onClick={handleLogout} disabled={pending}>
       {children}
     </DropdownMenuItem>
   );

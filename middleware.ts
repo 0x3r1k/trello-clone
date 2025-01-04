@@ -17,7 +17,7 @@ export default async function authMiddleware(request: NextRequest) {
       headers: {
         cookie: request.headers.get("cookie") || "",
       },
-    }
+    },
   );
 
   if (!session) {
@@ -28,9 +28,11 @@ export default async function authMiddleware(request: NextRequest) {
     return NextResponse.redirect(new URL("/auth/login", request.nextUrl));
   }
 
-  if (isAuthRoute || isPasswordRoute) {
+  if (isAuthRoute || isPasswordRoute)
     return NextResponse.redirect(new URL("/", request.nextUrl));
-  }
+
+  if (pathName === "/")
+    return NextResponse.redirect(new URL("/boards", request.nextUrl));
 
   return NextResponse.next();
 }
