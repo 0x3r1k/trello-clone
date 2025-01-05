@@ -10,12 +10,26 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
+  DropdownMenuPortal,
   DropdownMenuSeparator,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Checkbox } from "@/components/ui/checkbox";
 
-export const columns: ColumnDef<User>[] = [
+import {
+  removeMemberFromWorkspace,
+  updateMemberRoleInWorkspace,
+} from "@/actions/workspace";
+import { toast } from "@/hooks/use-toast";
+
+interface TUser extends User {
+  workspace: string;
+}
+
+export const columns: ColumnDef<TUser>[] = [
   {
     id: "select",
     header: ({ table }) => (
@@ -96,7 +110,7 @@ export const columns: ColumnDef<User>[] = [
   {
     id: "actions",
     enableHiding: false,
-    cell: () => (
+    cell: ({ row }) => (
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button variant="ghost" className="h-8 w-8 p-0">
@@ -107,9 +121,91 @@ export const columns: ColumnDef<User>[] = [
         <DropdownMenuContent align="end">
           <DropdownMenuLabel>Actions</DropdownMenuLabel>
           <DropdownMenuSeparator />
-          <DropdownMenuItem>Change role</DropdownMenuItem>
+          <DropdownMenuSub>
+            <DropdownMenuSubTrigger>Change role</DropdownMenuSubTrigger>
+            <DropdownMenuPortal>
+              <DropdownMenuSubContent>
+                <DropdownMenuItem
+                  onClick={async () => {
+                    const { success, message } =
+                      await updateMemberRoleInWorkspace(
+                        row.original.workspace,
+                        row.original.id,
+                        "admin",
+                      );
+
+                    if (success) {
+                      toast({
+                        title: "Success",
+                        description: message,
+                        className: "bg-green-500",
+                      });
+                    } else {
+                      toast({
+                        title: "Error",
+                        description: message,
+                        variant: "destructive",
+                      });
+                    }
+                  }}
+                >
+                  Admin
+                </DropdownMenuItem>
+
+                <DropdownMenuItem
+                  onClick={async () => {
+                    const { success, message } =
+                      await updateMemberRoleInWorkspace(
+                        row.original.workspace,
+                        row.original.id,
+                        "member",
+                      );
+
+                    if (success) {
+                      toast({
+                        title: "Success",
+                        description: message,
+                        className: "bg-green-500",
+                      });
+                    } else {
+                      toast({
+                        title: "Error",
+                        description: message,
+                        variant: "destructive",
+                      });
+                    }
+                  }}
+                >
+                  Member
+                </DropdownMenuItem>
+              </DropdownMenuSubContent>
+            </DropdownMenuPortal>
+          </DropdownMenuSub>
           <DropdownMenuSeparator />
-          <DropdownMenuItem>Remove from workspace</DropdownMenuItem>
+          <DropdownMenuItem
+            onClick={async () => {
+              const { success, message } = await removeMemberFromWorkspace(
+                row.original.workspace,
+                row.original.id,
+              );
+
+              if (success) {
+                toast({
+                  title: "Success",
+                  description: message,
+                  className: "bg-green-500",
+                });
+              } else {
+                toast({
+                  title: "Error",
+                  description: message,
+                  variant: "destructive",
+                });
+              }
+            }}
+          >
+            Remove from workspace
+          </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
     ),

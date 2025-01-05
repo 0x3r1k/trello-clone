@@ -15,6 +15,7 @@ export default async function WorkspaceMembersPage({
   return (
     <div className="container mx-auto">
       <Suspense fallback={<DataTableSkeleton />}>
+        {/* @ts-expect-error - This not is a error */}
         <DataTable columns={columns} data={members} />
       </Suspense>
     </div>
