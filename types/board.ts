@@ -1,5 +1,5 @@
 export interface Board {
   id: string;
   name: string;
-  last_updated: string;
+  last_updated: number;
 }

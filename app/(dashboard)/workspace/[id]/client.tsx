@@ -84,33 +84,21 @@ export default function WorkspaceClient({
             <div className="flex flex-col space-y-2 w-full">
               <Label htmlFor="sortby">Sort by</Label>
 
-              <Select>
+              <Select defaultValue={sortBy} onValueChange={(e) => setSortBy(e)}>
                 <SelectTrigger className="w-full lg:w-[250px]">
                   <SelectValue placeholder="Most recently active" id="sortby" />
                 </SelectTrigger>
 
                 <SelectContent>
                   <SelectGroup>
-                    <SelectItem
-                      value="recent"
-                      onClick={() => setSortBy("recent")}
-                    >
-                      Most recently active
-                    </SelectItem>
+                    <SelectItem value="recent">Most recently active</SelectItem>
 
-                    <SelectItem
-                      value="oldest"
-                      onClick={() => setSortBy("oldest")}
-                    >
+                    <SelectItem value="oldest">
                       Least recently active
                     </SelectItem>
 
-                    <SelectItem value="az" onClick={() => setSortBy("az")}>
-                      Alphabetically A-Z
-                    </SelectItem>
-                    <SelectItem value="za" onClick={() => setSortBy("za")}>
-                      Alphabetically Z-A
-                    </SelectItem>
+                    <SelectItem value="az">Alphabetically A-Z</SelectItem>
+                    <SelectItem value="za">Alphabetically Z-A</SelectItem>
                   </SelectGroup>
                 </SelectContent>
               </Select>
@@ -119,30 +107,19 @@ export default function WorkspaceClient({
             <div className="flex flex-col space-y-2 w-full">
               <Label htmlFor="filter">Filter</Label>
 
-              <Select>
+              <Select
+                defaultValue={filterBy}
+                onValueChange={(e) => setFilterBy(e)}
+              >
                 <SelectTrigger className="w-full lg:w-[250px]">
                   <SelectValue placeholder="All boards" id="filter" />
                 </SelectTrigger>
 
                 <SelectContent>
                   <SelectGroup>
-                    <SelectItem value="all" onClick={() => setFilterBy("all")}>
-                      All boards
-                    </SelectItem>
-
-                    <SelectItem
-                      value="active"
-                      onClick={() => setFilterBy("active")}
-                    >
-                      Active boards
-                    </SelectItem>
-
-                    <SelectItem
-                      value="archived"
-                      onClick={() => setFilterBy("archived")}
-                    >
-                      Archived boards
-                    </SelectItem>
+                    <SelectItem value="all">All boards</SelectItem>
+                    <SelectItem value="active">Active boards</SelectItem>
+                    <SelectItem value="archived">Archived boards</SelectItem>
                   </SelectGroup>
                 </SelectContent>
               </Select>
@@ -163,15 +140,53 @@ export default function WorkspaceClient({
           </div>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 lg:grid-cols-4 gap-4">
-          {boards.map((board) => (
-            <div
-              key={board.id}
-              className="flex flex-col p-4 rounded-lg bg-sidebar-foreground/10"
-            >
-              <span className="text-lg font-semibold">{board.name}</span>
-            </div>
-          ))}
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+          {boards
+            .filter(() => {
+              // if (filterBy === "active") {
+              //   return board.active;
+              // }
+
+              // if (filterBy === "archived") {
+              //   return !board.active;
+              // }
+
+              return true;
+            })
+            .filter((board) => {
+              if (search) {
+                return board.name.toLowerCase().includes(search.toLowerCase());
+              }
+
+              return true;
+            })
+            .sort((a, b) => {
+              if (sortBy === "recent") {
+                return b.last_updated - a.last_updated;
+              }
+
+              if (sortBy === "oldest") {
+                return a.last_updated - b.last_updated;
+              }
+
+              if (sortBy === "az") {
+                return a.name.localeCompare(b.name);
+              }
+
+              if (sortBy === "za") {
+                return b.name.localeCompare(a.name);
+              }
+
+              return 0;
+            })
+            .map((board) => (
+              <div
+                key={board.id}
+                className="flex flex-col p-4 rounded-lg bg-sidebar-foreground/10"
+              >
+                <span className="text-lg font-semibold">{board.name}</span>
+              </div>
+            ))}
         </div>
       </div>
     </div>
