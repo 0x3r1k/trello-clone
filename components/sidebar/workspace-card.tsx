@@ -9,7 +9,7 @@ export function WorkspaceCard({
   };
 }) {
   return (
-    <div className="flex items-center space-x-2">
+    <div className="flex items-center space-x-2 max-w-full">
       <Avatar className="h-8 w-8 rounded-lg">
         <AvatarImage src={item.image ?? undefined} alt={item.name} />
 

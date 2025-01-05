@@ -63,7 +63,11 @@ export function WorkspacesClient({ workspaces }: { workspaces: Workspace[] }) {
                   <SidebarMenuSub>
                     <SidebarMenuSubButton
                       href={`/workspace/${item.id}`}
-                      isActive={pathname.includes(`/workspace/${item.id}`)}
+                      isActive={
+                        pathname.includes(`/workspace/${item.id}`) &&
+                        !pathname.includes(`/workspace/${item.id}/members`) &&
+                        !pathname.includes(`/workspace/${item.id}/settings`)
+                      }
                     >
                       Boards
                     </SidebarMenuSubButton>
