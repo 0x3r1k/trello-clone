@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
-import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
+import Providers from "@/app/providers";
+import "./globals.css";
 
 export const metadata: Metadata = {
   title: "Trello Clone",
@@ -15,9 +16,11 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <Toaster />
+        <Providers>
+          <Toaster />
 
-        <main className="min-h-screen">{children}</main>
+          <main className="min-h-screen">{children}</main>
+        </Providers>
       </body>
     </html>
   );

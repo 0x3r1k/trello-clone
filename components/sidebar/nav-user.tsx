@@ -18,7 +18,9 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar";
+
 import LogoutButton from "@/components/logout-button";
+import ThemeButton from "@/components/theme-button";
 
 import { Session } from "@/lib/auth";
 import Link from "next/link";
@@ -44,13 +46,16 @@ export function NavUser({ user }: { user: Session["user"] }) {
                     .join("")}
                 </AvatarFallback>
               </Avatar>
+
               <div className="grid flex-1 text-left text-sm leading-tight">
                 <span className="truncate font-semibold">{user.name}</span>
                 <span className="truncate text-xs">{user.email}</span>
               </div>
+
               <ChevronsUpDown className="ml-auto size-4" />
             </SidebarMenuButton>
           </DropdownMenuTrigger>
+
           <DropdownMenuContent
             className="w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-lg"
             side={isMobile ? "bottom" : "right"}
@@ -84,6 +89,8 @@ export function NavUser({ user }: { user: Session["user"] }) {
                 </DropdownMenuItem>
               </Link>
             </DropdownMenuGroup>
+            <DropdownMenuSeparator />
+            <ThemeButton />
             <DropdownMenuSeparator />
             <LogoutButton>
               <LogOut />
