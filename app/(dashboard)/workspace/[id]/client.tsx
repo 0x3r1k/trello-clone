@@ -8,6 +8,16 @@ import { Button } from "@/components/ui/button";
 import { Pen, UserPlus } from "lucide-react";
 import { useState } from "react";
 import { Separator } from "@/components/ui/separator";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 export default function WorkspaceClient({
   workspace,
@@ -19,6 +29,9 @@ export default function WorkspaceClient({
   isAdmin: boolean;
 }) {
   const [editMode, setEditMode] = useState(false);
+  const [sortBy, setSortBy] = useState("recent");
+  const [filterBy, setFilterBy] = useState("all");
+  const [search, setSearch] = useState("");
 
   return (
     <div className="flex flex-col items-center space-y-4 container">
@@ -66,7 +79,91 @@ export default function WorkspaceClient({
       <div className="w-full flex flex-col space-y-4">
         <span className="text-lg font-semibold">Boards</span>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+        <div className="flex flex-col lg:flex-row items-center justify-between space-y-4 lg:space-y-0">
+          <div className="flex flex-col lg:flex-row items-center space-x-0 lg:space-x-2 space-y-4 lg:space-y-0 w-full lg:w-fit">
+            <div className="flex flex-col space-y-2 w-full">
+              <Label htmlFor="sortby">Sort by</Label>
+
+              <Select>
+                <SelectTrigger className="w-full lg:w-[250px]">
+                  <SelectValue placeholder="Most recently active" id="sortby" />
+                </SelectTrigger>
+
+                <SelectContent>
+                  <SelectGroup>
+                    <SelectItem
+                      value="recent"
+                      onClick={() => setSortBy("recent")}
+                    >
+                      Most recently active
+                    </SelectItem>
+
+                    <SelectItem
+                      value="oldest"
+                      onClick={() => setSortBy("oldest")}
+                    >
+                      Least recently active
+                    </SelectItem>
+
+                    <SelectItem value="az" onClick={() => setSortBy("az")}>
+                      Alphabetically A-Z
+                    </SelectItem>
+                    <SelectItem value="za" onClick={() => setSortBy("za")}>
+                      Alphabetically Z-A
+                    </SelectItem>
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="flex flex-col space-y-2 w-full">
+              <Label htmlFor="filter">Filter</Label>
+
+              <Select>
+                <SelectTrigger className="w-full lg:w-[250px]">
+                  <SelectValue placeholder="All boards" id="filter" />
+                </SelectTrigger>
+
+                <SelectContent>
+                  <SelectGroup>
+                    <SelectItem value="all" onClick={() => setFilterBy("all")}>
+                      All boards
+                    </SelectItem>
+
+                    <SelectItem
+                      value="active"
+                      onClick={() => setFilterBy("active")}
+                    >
+                      Active boards
+                    </SelectItem>
+
+                    <SelectItem
+                      value="archived"
+                      onClick={() => setFilterBy("archived")}
+                    >
+                      Archived boards
+                    </SelectItem>
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+
+          <div className="flex flex-col space-y-2 w-full lg:w-fit">
+            <Label htmlFor="search">Search</Label>
+
+            <Input
+              id="search"
+              type="text"
+              placeholder="Search boards"
+              className="w-full lg:w-72"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+            />
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 lg:grid-cols-4 gap-4">
           {boards.map((board) => (
             <div
               key={board.id}
