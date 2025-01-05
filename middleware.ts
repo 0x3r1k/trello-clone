@@ -45,8 +45,6 @@ export default async function authMiddleware(request: NextRequest) {
       await sql`SELECT * FROM workspace WHERE id = ${workspaceId} LIMIT 1`;
 
     if (!result[0]) {
-      console.log("Workspace not found", workspaceId);
-
       return NextResponse.redirect(new URL("/boards", request.nextUrl));
     }
 
@@ -55,8 +53,6 @@ export default async function authMiddleware(request: NextRequest) {
         await sql`SELECT * FROM workspace_members WHERE workspace_id = ${workspaceId} AND user_id = ${session.user.id} LIMIT 1`;
 
       if (!user[0]) {
-        console.log("User is not a member of the workspace");
-
         return NextResponse.redirect(new URL("/", request.nextUrl));
       }
     }

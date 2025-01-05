@@ -22,8 +22,6 @@ export async function NavWorkspaces() {
   const session = await auth.api.getSession({ headers: await headers() });
   const workspaces = await getWorkspaces(session!.user.id);
 
-  console.log(workspaces);
-
   return (
     <Suspense fallback={<WorkspacesClientSkeleton />}>
       <WorkspacesClient workspaces={workspaces} />
