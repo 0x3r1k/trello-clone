@@ -62,10 +62,8 @@ export function WorkspacesClient({ workspaces }: { workspaces: Workspace[] }) {
                 <CollapsibleContent>
                   <SidebarMenuSub>
                     <SidebarMenuSubButton
-                      href={`/workspace/${item.id}/boards`}
-                      isActive={pathname.includes(
-                        `/workspace/${item.id}/boards`,
-                      )}
+                      href={`/workspace/${item.id}`}
+                      isActive={pathname.includes(`/workspace/${item.id}`)}
                     >
                       Boards
                     </SidebarMenuSubButton>

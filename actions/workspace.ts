@@ -3,6 +3,7 @@
 import { neon } from "@neondatabase/serverless";
 
 import { Workspace } from "@/types/workspace";
+import { Board } from "@/types/board";
 import { User } from "@/types/user";
 
 import { auth } from "@/lib/auth";
@@ -21,6 +22,12 @@ export async function getWorkspace(id: string) {
   const response = await sql`SELECT * FROM workspace WHERE id = ${id} LIMIT 1`;
 
   return response[0] as Workspace;
+}
+
+export async function getBoards(id: string) {
+  const response = await sql`SELECT * FROM board WHERE workspace_id = ${id}`;
+
+  return response as Board[];
 }
 
 export async function getMembersFromWorkspace(id: string) {
