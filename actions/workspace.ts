@@ -53,7 +53,7 @@ export async function removeMemberFromWorkspace(
   }
 
   const workspace = await getWorkspace(workspaceId);
-  const user = await getUserFromWorkspace(workspaceId, userId);
+  const user = await getUserFromWorkspace(workspaceId, session.user.id);
 
   if (user.role === "member")
     return {
