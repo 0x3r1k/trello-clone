@@ -4,5 +4,4 @@ export interface User {
   email: string;
   emailVerified: boolean;
   image: string;
-  role: "admin" | "member";
 }

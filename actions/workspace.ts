@@ -9,6 +9,9 @@ import { User } from "@/types/user";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 
+import { sendEmail } from "./email";
+import { getUser, getUserFromWorkspace } from "./user";
+
 const sql = neon(process.env.DATABASE_URL as string);
 
 export async function getWorkspaces(userId: string) {
@@ -49,16 +52,29 @@ export async function removeMemberFromWorkspace(
     throw new Error("User not authenticated");
   }
 
-  const userData =
-    await sql`SELECT role FROM workspace_members WHERE workspace_id = ${workspaceId} AND user_id = ${session.user.id} LIMIT 1`;
+  const workspace = await getWorkspace(workspaceId);
+  const user = await getUserFromWorkspace(workspaceId, userId);
 
-  if (userData[0].role === "member")
+  if (user.role === "member")
     return {
       success: false,
       message: "You don't have permission to remove a member",
     };
 
+  const target = await getUser(userId);
+
+  if (!target)
+    return {
+      success: false,
+      message: "User not found",
+    };
+
   await sql`DELETE FROM workspace_members WHERE workspace_id = ${workspaceId} AND user_id = ${userId}`;
+  await sendEmail({
+    to: target.email,
+    subject: "You were removed from a workspace",
+    text: `You were removed from the workspace ${workspace.name} (${workspace.id}) by ${session.user.name}`,
+  });
 
   return {
     success: true,
