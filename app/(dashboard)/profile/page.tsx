@@ -18,7 +18,7 @@ export default async function ProfilePage() {
 
         <CardContent>
           {session.user.emailVerified === false && (
-            <div className="bg-yellow-100 border-l-4 border-yellow-500 p-4 mb-4 bg-primary-foreground">
+            <div className="border-l-4 border-yellow-500 p-4 mb-4 bg-primary-foreground">
               <p className="font-bold">Email not verified</p>
               <p>
                 Your email address has not been verified. Please check your
