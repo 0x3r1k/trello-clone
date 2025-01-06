@@ -95,10 +95,9 @@ export async function addMemberToWorkspace(
     throw new Error("User not authenticated");
   }
 
-  const userData =
-    await sql`SELECT role FROM workspace_members WHERE workspace_id = ${workspaceId} AND user_id = ${session.user.id} LIMIT 1`;
+  const user = await getUserFromWorkspace(workspaceId, session.user.id);
 
-  if (userData[0].role === "member")
+  if (user.role === "member")
     return {
       success: false,
       message: "You don't have permission to add a member",
@@ -125,10 +124,9 @@ export async function updateMemberRoleInWorkspace(
     throw new Error("User not authenticated");
   }
 
-  const userData =
-    await sql`SELECT role FROM workspace_members WHERE workspace_id = ${workspaceId} AND user_id = ${session.user.id} LIMIT 1`;
+  const user = await getUserFromWorkspace(workspaceId, session.user.id);
 
-  if (userData[0].role === "member")
+  if (user.role === "member")
     return {
       success: false,
       message: "You don't have permission to update a member role",
