@@ -13,6 +13,18 @@ export const auth = betterAuth({
       rejectUnauthorized: false,
     },
   }),
+  user: {
+    changeEmail: {
+      enabled: true,
+      sendChangeEmailVerification: async ({ user, newEmail, url }) => {
+        await sendEmail({
+          to: user.email,
+          subject: "Verify your email change",
+          text: `Click the following link to verify your new email address: ${url}\nThe new email address: ${newEmail}\n\nIf you didn't request this change, please contact us immediately.`,
+        });
+      },
+    },
+  },
   emailAndPassword: {
     enabled: true,
     requireEmailVerification: true,

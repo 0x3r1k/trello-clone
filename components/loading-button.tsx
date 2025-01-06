@@ -24,13 +24,13 @@ export default function LoadingButton({
       {...(typeof className === "string"
         ? { className }
         : typeof className === "boolean"
-        ? {}
-        : { className: "w-full" })}
+          ? {}
+          : { className: "w-full" })}
     >
       {pending ? (
         <div className="flex items-center justify-center">
           <svg
-            className="animate-spin h-5 w-5 text-white"
+            className="animate-spin h-5 w-5 text-primary-foreground"
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
             viewBox="0 0 24 24"
