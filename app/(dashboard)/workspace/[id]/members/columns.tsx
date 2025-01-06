@@ -18,12 +18,12 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Checkbox } from "@/components/ui/checkbox";
+import { toast } from "@/hooks/use-toast";
 
 import {
   removeMemberFromWorkspace,
   updateMemberRoleInWorkspace,
 } from "@/actions/workspace";
-import { toast } from "@/hooks/use-toast";
 
 interface TUser extends User {
   workspace: string;
@@ -140,6 +140,8 @@ export const columns: ColumnDef<TUser>[] = [
                         description: message,
                         className: "bg-green-500",
                       });
+
+                      window.location.reload();
                     } else {
                       toast({
                         title: "Error",
@@ -167,6 +169,8 @@ export const columns: ColumnDef<TUser>[] = [
                         description: message,
                         className: "bg-green-500",
                       });
+
+                      window.location.reload();
                     } else {
                       toast({
                         title: "Error",
@@ -195,6 +199,8 @@ export const columns: ColumnDef<TUser>[] = [
                   description: message,
                   className: "bg-green-500",
                 });
+
+                window.location.reload();
               } else {
                 toast({
                   title: "Error",
