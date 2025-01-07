@@ -196,7 +196,7 @@ export async function updateWorkspaceImage(
   if (fmId) {
     await sql`UPDATE workspace SET image = ${imageUrl}, image_fm_id = ${fmId} WHERE id = ${workspaceId}`;
   } else {
-    await sql`UPDATE workspace SET image = ${imageUrl} WHERE id = ${workspaceId}`;
+    await sql`UPDATE workspace SET image = ${imageUrl}, image_fm_id = NULL WHERE id = ${workspaceId}`;
   }
 
   if (workspace.image && workspace.image_fm_id) {
