@@ -12,6 +12,8 @@ import { headers } from "next/headers";
 import { sendEmail } from "./email";
 import { getUser, getUserFromWorkspace } from "./user";
 
+import { fmClient } from "@/lib/fivemanage";
+
 const sql = neon(process.env.DATABASE_URL as string);
 
 export async function getWorkspaces(userId: string) {
@@ -42,7 +44,7 @@ export async function getMembersFromWorkspace(id: string) {
 
 export async function removeMemberFromWorkspace(
   workspaceId: string,
-  userId: string,
+  userId: string
 ) {
   const session = await auth.api.getSession({
     headers: await headers(),
@@ -85,7 +87,7 @@ export async function removeMemberFromWorkspace(
 export async function addMemberToWorkspace(
   workspaceId: string,
   userId: string,
-  role: string,
+  role: string
 ) {
   const session = await auth.api.getSession({
     headers: await headers(),
@@ -114,7 +116,7 @@ export async function addMemberToWorkspace(
 export async function updateMemberRoleInWorkspace(
   workspaceId: string,
   userId: string,
-  role: string,
+  role: string
 ) {
   const session = await auth.api.getSession({
     headers: await headers(),
@@ -142,7 +144,7 @@ export async function updateMemberRoleInWorkspace(
 
 export async function updateWorkspaceName(
   workspaceId: string,
-  newName: string,
+  newName: string
 ) {
   const session = await auth.api.getSession({
     headers: await headers(),
@@ -165,6 +167,45 @@ export async function updateWorkspaceName(
   return {
     success: true,
     message: "Workspace name updated",
+  };
+}
+
+export async function updateWorkspaceImage(
+  workspaceId: string,
+  imageUrl: string,
+  fmId?: string
+) {
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
+
+  if (!session) {
+    throw new Error("User not authenticated");
+  }
+
+  const user = await getUserFromWorkspace(workspaceId, session.user.id);
+
+  if (user.role === "member")
+    return {
+      success: false,
+      message: "You don't have permission to update the workspace image",
+    };
+
+  const workspace = await getWorkspace(workspaceId);
+
+  if (fmId) {
+    await sql`UPDATE workspace SET image = ${imageUrl}, image_fm_id = ${fmId} WHERE id = ${workspaceId}`;
+  } else {
+    await sql`UPDATE workspace SET image = ${imageUrl} WHERE id = ${workspaceId}`;
+  }
+
+  if (workspace.image && workspace.image_fm_id) {
+    await fmClient.deleteFile("image", workspace.image_fm_id);
+  }
+
+  return {
+    success: true,
+    message: "Workspace image updated",
   };
 }
 

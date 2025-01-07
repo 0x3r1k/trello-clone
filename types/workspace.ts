@@ -3,4 +3,5 @@ export interface Workspace {
   name: string;
   visibility: "public" | "private";
   image?: string;
+  image_fm_id?: string;
 }

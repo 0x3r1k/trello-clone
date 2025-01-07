@@ -25,18 +25,19 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
 
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import LoadingButton from "@/components/loading-button";
 
 import { useToast } from "@/hooks/use-toast";
 import { useRouter } from "next/navigation";
 
 import { Check, Pen, UserPlus, X } from "lucide-react";
-import { updateWorkspaceName } from "@/actions/workspace";
+import { updateWorkspaceName, updateWorkspaceImage } from "@/actions/workspace";
 
 import { motion } from "motion/react";
+import { fmClient } from "@/lib/fivemanage";
 
 export default function WorkspaceClient({
   workspace,
@@ -54,8 +55,12 @@ export default function WorkspaceClient({
   const [workspaceName, setWorkspaceName] = useState("");
   const [loading, setLoading] = useState(false);
 
+  const [dialogOpen, setDialogOpen] = useState(false);
   const [hoverImg, setHoverImg] = useState(false);
-  const [workspaceImage, setWorkspaceImage] = useState<string>("");
+  const [tabType, setTabType] = useState<string | "url" | "file">("url");
+  const [tabUrl, setTabUrl] = useState("");
+  const [tabFile, setTabFile] = useState<File | null>(null);
+  const [loadingImageSave, setLoadingImageSave] = useState(false);
 
   const [sortBy, setSortBy] = useState("recent");
   const [filterBy, setFilterBy] = useState("all");
@@ -67,7 +72,7 @@ export default function WorkspaceClient({
 
     const { success, message } = await updateWorkspaceName(
       workspace.id,
-      workspaceName,
+      workspaceName
     );
 
     setEditMode(false);
@@ -82,66 +87,135 @@ export default function WorkspaceClient({
     router.refresh();
   };
 
+  const saveWorkspaceImage = async () => {
+    setLoadingImageSave(true);
+
+    let newUrl: string = tabUrl;
+    let fmId: string | undefined;
+
+    if (tabType === "file" && tabFile) {
+      const file = new Blob([tabFile], {
+        type: tabFile.type,
+      });
+
+      const uploadResponse = await fmClient.uploadFile("image", file, {
+        name: `workspace-${workspace.id}-image`,
+        description: `Workspace ${workspace.name} image`,
+      });
+
+      if (uploadResponse.url) {
+        newUrl = uploadResponse.url;
+        fmId = uploadResponse.id;
+      }
+    }
+
+    const { success, message } = await updateWorkspaceImage(
+      workspace.id,
+      newUrl,
+      fmId
+    );
+
+    setDialogOpen(false);
+    setLoadingImageSave(false);
+
+    if (success) {
+      toast({ title: "Success", description: message });
+    } else {
+      toast({ title: "Error", description: message, variant: "destructive" });
+    }
+
+    router.refresh();
+  };
+
   return (
     <div className="flex flex-col items-center space-y-4 container">
       <div className="w-3/4 flex flex-col lg:flex-row items-center justify-between py-4 space-y-4 lg:space-y-0 lg:space-x-2">
         <div className="flex items-center space-x-4">
-          <Dialog onOpenChange={() => setWorkspaceImage(workspace.image || "")}>
-            <DialogTrigger>
-              <Avatar
-                className={`h-16 w-16 rounded-lg ${isAdmin && "cursor-pointer"}`}
-                onMouseEnter={() => setHoverImg(true)}
-                onMouseLeave={() => setHoverImg(false)}
+          <Avatar
+            className={`h-16 w-16 rounded-lg ${isAdmin && "cursor-pointer"}`}
+            onMouseEnter={() => setHoverImg(true)}
+            onMouseLeave={() => setHoverImg(false)}
+            onClick={() => isAdmin && setDialogOpen(true)}
+          >
+            <AvatarImage
+              src={workspace.image ?? undefined}
+              alt={workspace.name}
+            />
+
+            <AvatarFallback className="rounded-lg bg-sidebar-foreground/10 text-sidebar-foreground text-2xl">
+              {workspace.name[0]}
+            </AvatarFallback>
+
+            {isAdmin && (
+              <motion.div
+                className="absolute bottom-1.5 right-1"
+                animate={{ opacity: hoverImg ? 1 : 0 }}
+                transition={{ duration: 0.2 }}
               >
-                <AvatarImage
-                  src={workspace.image ?? undefined}
-                  alt={workspace.name}
-                />
+                <Pen className="w-3 h-3" />
+              </motion.div>
+            )}
+          </Avatar>
 
-                <AvatarFallback className="rounded-lg bg-sidebar-foreground/10 text-sidebar-foreground text-2xl">
-                  {workspace.name[0]}
-                </AvatarFallback>
-
-                {isAdmin && (
-                  <motion.div
-                    className="absolute bottom-1.5 right-1"
-                    animate={{ opacity: hoverImg ? 1 : 0 }}
-                    transition={{ duration: 0.2 }}
-                  >
-                    <Pen className="w-3 h-3" />
-                  </motion.div>
-                )}
-              </Avatar>
-            </DialogTrigger>
-
+          <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
             <DialogContent>
               <DialogHeader>
                 <DialogTitle>Change Workspace Image</DialogTitle>
                 <DialogDescription>
-                  <div className="flex flex-col space-y-4 mt-2">
-                    <div className="flex flex-col space-y-2">
-                      <Label htmlFor="workspace-image">Workspace Image</Label>
+                  Update the workspace image by providing a URL or uploading a
+                  file
+                </DialogDescription>
 
+                <div className="flex flex-col space-y-4 mt-2">
+                  <Tabs
+                    defaultValue="url"
+                    value={tabType}
+                    onValueChange={setTabType}
+                  >
+                    <TabsList className="w-full mb-2">
+                      <TabsTrigger value="url" className="w-full">
+                        URL
+                      </TabsTrigger>
+
+                      <TabsTrigger value="file" className="w-full">
+                        File
+                      </TabsTrigger>
+                    </TabsList>
+
+                    <TabsContent value="url">
                       <Input
-                        type="url"
+                        type="text"
                         id="workspace-image"
                         placeholder="Workspace Image URL"
-                        defaultValue={workspace.image}
-                        value={workspaceImage}
-                        onChange={(e) => setWorkspaceImage(e.target.value)}
+                        value={tabUrl}
+                        onChange={(e) => setTabUrl(e.target.value)}
                       />
-                    </div>
+                    </TabsContent>
 
-                    <Button
-                      className="bg-blue-500 hover:bg-blue-400"
-                      onClick={() => {
-                        // updateWorkspaceImage(workspace.id, workspaceImage);
-                      }}
-                    >
-                      Save
-                    </Button>
-                  </div>
-                </DialogDescription>
+                    <TabsContent value="file">
+                      <Input
+                        type="file"
+                        id="workspace-image"
+                        placeholder="Workspace Image URL"
+                        onChange={(e) => {
+                          const file = e.target.files?.[0];
+                          if (!file) return;
+
+                          setTabFile(file);
+                        }}
+                        accept="image/*"
+                      />
+                    </TabsContent>
+                  </Tabs>
+
+                  <LoadingButton
+                    className="bg-blue-500 hover:bg-blue-400"
+                    onClick={saveWorkspaceImage}
+                    pending={loadingImageSave}
+                  >
+                    Save Image
+                  </LoadingButton>
+                </div>
               </DialogHeader>
             </DialogContent>
           </Dialog>
