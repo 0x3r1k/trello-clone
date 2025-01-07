@@ -4,23 +4,25 @@ export default function LoadingButton({
   pending,
   variant,
   type,
+  className,
+  disabled,
   children,
   onClick,
-  className,
 }: {
   pending: boolean;
   variant?: "outline" | "destructive";
   type?: "button" | "submit";
+  className?: string | boolean;
+  disabled?: boolean;
   children: React.ReactNode;
   onClick?: () => void;
-  className?: string | boolean;
 }) {
   return (
     <Button
       type={type ?? "submit"}
       variant={variant ?? "default"}
       onClick={onClick}
-      disabled={pending}
+      disabled={disabled || pending}
       {...(typeof className === "string"
         ? { className }
         : typeof className === "boolean"

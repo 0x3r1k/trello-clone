@@ -140,6 +140,34 @@ export async function updateMemberRoleInWorkspace(
   };
 }
 
+export async function updateWorkspaceName(
+  workspaceId: string,
+  newName: string,
+) {
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
+
+  if (!session) {
+    throw new Error("User not authenticated");
+  }
+
+  const user = await getUserFromWorkspace(workspaceId, session.user.id);
+
+  if (user.role === "member")
+    return {
+      success: false,
+      message: "You don't have permission to update the workspace name",
+    };
+
+  await sql`UPDATE workspace SET name = ${newName} WHERE id = ${workspaceId}`;
+
+  return {
+    success: true,
+    message: "Workspace name updated",
+  };
+}
+
 export async function isWorkspaceAdmin(workspaceId: string, userId: string) {
   const response =
     await sql`SELECT role FROM workspace_members WHERE workspace_id = ${workspaceId} AND user_id = ${userId} LIMIT 1`;

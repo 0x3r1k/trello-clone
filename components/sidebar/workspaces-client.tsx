@@ -36,64 +36,66 @@ export function WorkspacesClient({ workspaces }: { workspaces: Workspace[] }) {
 
       <SidebarMenu>
         {workspaces.length > 0 &&
-          workspaces.map((item) => (
-            <Collapsible
-              key={item.id}
-              className="group/collapsible"
-              defaultOpen={pathname.includes(`/workspace/${item.id}`)}
-            >
-              <SidebarMenuItem>
-                <CollapsibleTrigger asChild>
-                  <SidebarMenuButton
-                    size="lg"
-                    tooltip={item.name}
-                    isActive={pathname.includes(`/workspace/${item.id}`)}
-                  >
-                    {state === "collapsed" ? (
-                      <Link href={`/workspace/${item.id}`}>
+          workspaces
+            .sort((a, b) => Number(a.id) - Number(b.id))
+            .map((item) => (
+              <Collapsible
+                key={item.id}
+                className="group/collapsible"
+                defaultOpen={pathname.includes(`/workspace/${item.id}`)}
+              >
+                <SidebarMenuItem>
+                  <CollapsibleTrigger asChild>
+                    <SidebarMenuButton
+                      size="lg"
+                      tooltip={item.name}
+                      isActive={pathname.includes(`/workspace/${item.id}`)}
+                    >
+                      {state === "collapsed" ? (
+                        <Link href={`/workspace/${item.id}`}>
+                          <WorkspaceCard item={item} />
+                        </Link>
+                      ) : (
                         <WorkspaceCard item={item} />
-                      </Link>
-                    ) : (
-                      <WorkspaceCard item={item} />
-                    )}
-                  </SidebarMenuButton>
-                </CollapsibleTrigger>
-
-                <CollapsibleContent>
-                  <SidebarMenuSub>
-                    <SidebarMenuSubButton
-                      href={`/workspace/${item.id}`}
-                      isActive={
-                        pathname.includes(`/workspace/${item.id}`) &&
-                        !pathname.includes(`/workspace/${item.id}/members`) &&
-                        !pathname.includes(`/workspace/${item.id}/settings`)
-                      }
-                    >
-                      Boards
-                    </SidebarMenuSubButton>
-
-                    <SidebarMenuSubButton
-                      href={`/workspace/${item.id}/members`}
-                      isActive={pathname.includes(
-                        `/workspace/${item.id}/members`,
                       )}
-                    >
-                      Members
-                    </SidebarMenuSubButton>
+                    </SidebarMenuButton>
+                  </CollapsibleTrigger>
 
-                    <SidebarMenuSubButton
-                      href={`/workspace/${item.id}/settings`}
-                      isActive={pathname.includes(
-                        `/workspace/${item.id}/settings`,
-                      )}
-                    >
-                      Settings
-                    </SidebarMenuSubButton>
-                  </SidebarMenuSub>
-                </CollapsibleContent>
-              </SidebarMenuItem>
-            </Collapsible>
-          ))}
+                  <CollapsibleContent>
+                    <SidebarMenuSub>
+                      <SidebarMenuSubButton
+                        href={`/workspace/${item.id}`}
+                        isActive={
+                          pathname.includes(`/workspace/${item.id}`) &&
+                          !pathname.includes(`/workspace/${item.id}/members`) &&
+                          !pathname.includes(`/workspace/${item.id}/settings`)
+                        }
+                      >
+                        Boards
+                      </SidebarMenuSubButton>
+
+                      <SidebarMenuSubButton
+                        href={`/workspace/${item.id}/members`}
+                        isActive={pathname.includes(
+                          `/workspace/${item.id}/members`,
+                        )}
+                      >
+                        Members
+                      </SidebarMenuSubButton>
+
+                      <SidebarMenuSubButton
+                        href={`/workspace/${item.id}/settings`}
+                        isActive={pathname.includes(
+                          `/workspace/${item.id}/settings`,
+                        )}
+                      >
+                        Settings
+                      </SidebarMenuSubButton>
+                    </SidebarMenuSub>
+                  </CollapsibleContent>
+                </SidebarMenuItem>
+              </Collapsible>
+            ))}
       </SidebarMenu>
     </>
   );
