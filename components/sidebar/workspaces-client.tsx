@@ -64,32 +64,36 @@ export function WorkspacesClient({ workspaces }: { workspaces: Workspace[] }) {
                   <CollapsibleContent>
                     <SidebarMenuSub>
                       <SidebarMenuSubButton
-                        href={`/workspace/${item.id}`}
                         isActive={
                           pathname.includes(`/workspace/${item.id}`) &&
                           !pathname.includes(`/workspace/${item.id}/members`) &&
                           !pathname.includes(`/workspace/${item.id}/settings`)
                         }
+                        asChild
                       >
-                        Boards
+                        <Link href={`/workspace/${item.id}`}>Boards</Link>
                       </SidebarMenuSubButton>
 
                       <SidebarMenuSubButton
-                        href={`/workspace/${item.id}/members`}
                         isActive={pathname.includes(
-                          `/workspace/${item.id}/members`,
+                          `/workspace/${item.id}/members`
                         )}
+                        asChild
                       >
-                        Members
+                        <Link href={`/workspace/${item.id}/members`}>
+                          Members
+                        </Link>
                       </SidebarMenuSubButton>
 
                       <SidebarMenuSubButton
-                        href={`/workspace/${item.id}/settings`}
                         isActive={pathname.includes(
-                          `/workspace/${item.id}/settings`,
+                          `/workspace/${item.id}/settings`
                         )}
+                        asChild
                       >
-                        Settings
+                        <Link href={`/workspace/${item.id}/settings`}>
+                          Settings
+                        </Link>
                       </SidebarMenuSubButton>
                     </SidebarMenuSub>
                   </CollapsibleContent>
