@@ -303,5 +303,5 @@ export async function isWorkspaceAdmin(workspaceId: string, userId: string) {
   const response =
     await sql`SELECT role FROM workspace_members WHERE workspace_id = ${workspaceId} AND user_id = ${userId} LIMIT 1`;
 
-  return response[0].role === "admin";
+  return response[0] ? response[0].role === "admin" : false;
 }
