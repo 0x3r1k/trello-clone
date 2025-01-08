@@ -19,25 +19,17 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import LoadingButton from "@/components/loading-button";
+import WorkspaceImageForm from "@/components/workspace/ImageForm";
 
 import { useToast } from "@/hooks/use-toast";
 import { useRouter } from "next/navigation";
 
 import { Check, Pen, UserPlus, X } from "lucide-react";
-import { updateWorkspaceName, updateWorkspaceImage } from "@/actions/workspace";
+import { updateWorkspaceName } from "@/actions/workspace";
 
 import { motion } from "motion/react";
-import { fmClient } from "@/lib/fivemanage";
+import InviteMemberForm from "@/components/workspace/InviteMemberForm";
 
 export default function WorkspaceClient({
   workspace,
@@ -53,14 +45,11 @@ export default function WorkspaceClient({
 
   const [editMode, setEditMode] = useState(false);
   const [workspaceName, setWorkspaceName] = useState("");
+  const [hoverImg, setHoverImg] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const [dialogOpen, setDialogOpen] = useState(false);
-  const [hoverImg, setHoverImg] = useState(false);
-  const [tabType, setTabType] = useState<string | "url" | "file">("url");
-  const [tabUrl, setTabUrl] = useState("");
-  const [tabFile, setTabFile] = useState<File | null>(null);
-  const [loadingImageSave, setLoadingImageSave] = useState(false);
+  const [imageDialogOpen, setImageDialogOpen] = useState(false);
+  const [inviteDialogOpen, setInviteDialogOpen] = useState(false);
 
   const [sortBy, setSortBy] = useState("recent");
   const [filterBy, setFilterBy] = useState("all");
@@ -87,46 +76,6 @@ export default function WorkspaceClient({
     router.refresh();
   };
 
-  const saveWorkspaceImage = async () => {
-    setLoadingImageSave(true);
-
-    let newUrl: string = tabUrl;
-    let fmId: string | undefined;
-
-    if (tabType === "file" && tabFile) {
-      const file = new Blob([tabFile], {
-        type: tabFile.type,
-      });
-
-      const uploadResponse = await fmClient.uploadFile("image", file, {
-        name: `workspace-${workspace.id}-image`,
-        description: `Workspace ${workspace.name} image`,
-      });
-
-      if (uploadResponse.url) {
-        newUrl = uploadResponse.url;
-        fmId = uploadResponse.id;
-      }
-    }
-
-    const { success, message } = await updateWorkspaceImage(
-      workspace.id,
-      newUrl,
-      fmId
-    );
-
-    setDialogOpen(false);
-    setLoadingImageSave(false);
-
-    if (success) {
-      toast({ title: "Success", description: message });
-    } else {
-      toast({ title: "Error", description: message, variant: "destructive" });
-    }
-
-    router.refresh();
-  };
-
   return (
     <div className="flex flex-col items-center space-y-4 container">
       <div className="w-3/4 flex flex-col lg:flex-row items-center justify-between py-4 space-y-4 lg:space-y-0 lg:space-x-2">
@@ -135,7 +84,7 @@ export default function WorkspaceClient({
             className={`h-16 w-16 rounded-lg ${isAdmin && "cursor-pointer"}`}
             onMouseEnter={() => setHoverImg(true)}
             onMouseLeave={() => setHoverImg(false)}
-            onClick={() => isAdmin && setDialogOpen(true)}
+            onClick={() => isAdmin && setImageDialogOpen(true)}
           >
             <AvatarImage
               src={workspace.image ?? undefined}
@@ -157,68 +106,17 @@ export default function WorkspaceClient({
             )}
           </Avatar>
 
-          <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-            <DialogContent>
-              <DialogHeader>
-                <DialogTitle>Change Workspace Image</DialogTitle>
-                <DialogDescription>
-                  Update the workspace image by providing a URL or uploading a
-                  file
-                </DialogDescription>
+          <WorkspaceImageForm
+            workspace={workspace}
+            dialogOpen={imageDialogOpen}
+            setDialogOpen={setImageDialogOpen}
+          />
 
-                <div className="flex flex-col space-y-4 mt-2">
-                  <Tabs
-                    defaultValue="url"
-                    value={tabType}
-                    onValueChange={setTabType}
-                  >
-                    <TabsList className="w-full mb-2">
-                      <TabsTrigger value="url" className="w-full">
-                        URL
-                      </TabsTrigger>
-
-                      <TabsTrigger value="file" className="w-full">
-                        File
-                      </TabsTrigger>
-                    </TabsList>
-
-                    <TabsContent value="url">
-                      <Input
-                        type="text"
-                        id="workspace-image"
-                        placeholder="Workspace Image URL"
-                        value={tabUrl}
-                        onChange={(e) => setTabUrl(e.target.value)}
-                      />
-                    </TabsContent>
-
-                    <TabsContent value="file">
-                      <Input
-                        type="file"
-                        id="workspace-image"
-                        placeholder="Workspace Image URL"
-                        onChange={(e) => {
-                          const file = e.target.files?.[0];
-                          if (!file) return;
-
-                          setTabFile(file);
-                        }}
-                        accept="image/*"
-                      />
-                    </TabsContent>
-                  </Tabs>
-
-                  <LoadingButton
-                    className="bg-blue-500 hover:bg-blue-400"
-                    onClick={saveWorkspaceImage}
-                    pending={loadingImageSave}
-                  >
-                    Save Image
-                  </LoadingButton>
-                </div>
-              </DialogHeader>
-            </DialogContent>
-          </Dialog>
+          <InviteMemberForm
+            workspace={workspace}
+            dialogOpen={inviteDialogOpen}
+            setDialogOpen={setInviteDialogOpen}
+          />
 
           <div className="flex flex-col">
             <div className="flex items-center space-x-2">
@@ -271,7 +169,11 @@ export default function WorkspaceClient({
           </div>
         </div>
 
-        <Button className="bg-blue-500 hover:bg-blue-400">
+        <Button
+          className="bg-blue-500 hover:bg-blue-400"
+          onClick={() => setInviteDialogOpen(true)}
+          disabled={!isAdmin}
+        >
           <UserPlus className="h-6 w-6" /> Invite Workspace members
         </Button>
       </div>

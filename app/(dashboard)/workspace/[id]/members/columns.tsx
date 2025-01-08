@@ -1,6 +1,6 @@
 "use client";
 
-import { User } from "@/types/user";
+import { User, UserInvite } from "@/types/user";
 import { ColumnDef } from "@tanstack/react-table";
 
 import { ArrowUpDown, MoreHorizontal } from "lucide-react";
@@ -25,11 +25,16 @@ import {
   updateMemberRoleInWorkspace,
 } from "@/actions/workspace";
 
+import {
+  cancelInviteToWorkspace,
+  resendInviteToWorkspace,
+} from "@/actions/invitation";
+
 interface TUser extends User {
   workspace: string;
 }
 
-export const columns: ColumnDef<TUser>[] = [
+export const membersColumn: ColumnDef<TUser>[] = [
   {
     id: "select",
     header: ({ table }) => (
@@ -131,7 +136,7 @@ export const columns: ColumnDef<TUser>[] = [
                       await updateMemberRoleInWorkspace(
                         row.original.workspace,
                         row.original.id,
-                        "admin",
+                        "admin"
                       );
 
                     if (success) {
@@ -160,7 +165,7 @@ export const columns: ColumnDef<TUser>[] = [
                       await updateMemberRoleInWorkspace(
                         row.original.workspace,
                         row.original.id,
-                        "member",
+                        "member"
                       );
 
                     if (success) {
@@ -190,7 +195,7 @@ export const columns: ColumnDef<TUser>[] = [
             onClick={async () => {
               const { success, message } = await removeMemberFromWorkspace(
                 row.original.workspace,
-                row.original.id,
+                row.original.id
               );
 
               if (success) {
@@ -211,6 +216,136 @@ export const columns: ColumnDef<TUser>[] = [
             }}
           >
             Remove from workspace
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+    ),
+  },
+];
+
+export const pendingInvitesColumn: ColumnDef<UserInvite>[] = [
+  {
+    id: "select",
+    header: ({ table }) => (
+      <Checkbox
+        checked={
+          table.getIsAllPageRowsSelected() ||
+          (table.getIsSomePageRowsSelected() && "indeterminate")
+        }
+        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+        aria-label="Select all"
+      />
+    ),
+    cell: ({ row }) => (
+      <Checkbox
+        checked={row.getIsSelected()}
+        onCheckedChange={(value) => row.toggleSelected(!!value)}
+        aria-label="Select row"
+      />
+    ),
+    enableSorting: false,
+    enableHiding: false,
+  },
+  {
+    accessorKey: "name",
+    header: "Name",
+  },
+  {
+    accessorKey: "email",
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Email
+          <ArrowUpDown />
+        </Button>
+      );
+    },
+    cell: ({ row }) => <div className="lowercase">{row.getValue("email")}</div>,
+  },
+  {
+    accessorKey: "role",
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Role
+          <ArrowUpDown />
+        </Button>
+      );
+    },
+    cell: ({ row }) => <div className="capitalize">{row.getValue("role")}</div>,
+  },
+  {
+    id: "actions",
+    enableHiding: false,
+    cell: ({ row }) => (
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button variant="ghost" className="h-8 w-8 p-0">
+            <span className="sr-only">Open menu</span>
+            <MoreHorizontal />
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end">
+          <DropdownMenuLabel>Actions</DropdownMenuLabel>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem
+            onClick={async () => {
+              const { success, message } = await resendInviteToWorkspace(
+                row.original.workspace_id,
+                row.original.id
+              );
+
+              if (success) {
+                toast({
+                  title: "Success",
+                  description: message,
+                  className: "bg-green-500",
+                });
+
+                window.location.reload();
+              } else {
+                toast({
+                  title: "Error",
+                  description: message,
+                  variant: "destructive",
+                });
+              }
+            }}
+          >
+            Resend invite
+          </DropdownMenuItem>
+
+          <DropdownMenuItem
+            onClick={async () => {
+              const { success, message } = await cancelInviteToWorkspace(
+                row.original.workspace_id,
+                row.original.id
+              );
+
+              if (success) {
+                toast({
+                  title: "Success",
+                  description: message,
+                  className: "bg-green-500",
+                });
+
+                window.location.reload();
+              } else {
+                toast({
+                  title: "Error",
+                  description: message,
+                  variant: "destructive",
+                });
+              }
+            }}
+          >
+            Cancel invite
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>

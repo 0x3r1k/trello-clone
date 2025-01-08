@@ -1,6 +1,7 @@
 "use server";
 
 import { neon } from "@neondatabase/serverless";
+import { generateId } from "better-auth";
 
 import { Workspace } from "@/types/workspace";
 import { Board } from "@/types/board";
@@ -10,7 +11,7 @@ import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 
 import { sendEmail } from "./email";
-import { getUser, getUserFromWorkspace } from "./user";
+import { getUser, getUserByEmailOrUser, getUserFromWorkspace } from "./user";
 
 import { fmClient } from "@/lib/fivemanage";
 
@@ -40,6 +41,13 @@ export async function getMembersFromWorkspace(id: string) {
     await sql`SELECT u.*, wm.role, wm.workspace_id as workspace FROM public.user u INNER JOIN workspace_members wm ON u.id = wm.user_id WHERE wm.workspace_id = ${id}`;
 
   return response as User[];
+}
+
+export async function getPendingInvitesFromWorkspace(id: string) {
+  const response =
+    await sql`SELECT wi.*, u.name, u.email FROM workspace_invites wi INNER JOIN public.user u ON wi.user_id = u.id WHERE wi.workspace_id = ${id}`;
+
+  return response;
 }
 
 export async function removeMemberFromWorkspace(
@@ -207,6 +215,88 @@ export async function updateWorkspaceImage(
     success: true,
     message: "Workspace image updated",
   };
+}
+
+export async function inviteUserToWorkspace(
+  workspaceId: string,
+  emailOrUser: string,
+  role: string
+) {
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
+
+  if (!session) {
+    throw new Error("User not authenticated");
+  }
+
+  const user = await getUserFromWorkspace(workspaceId, session.user.id);
+
+  if (user.role === "member")
+    return {
+      success: false,
+      message: "You don't have permission to invite a user",
+    };
+
+  const target = await getUserByEmailOrUser(emailOrUser);
+
+  if (!target)
+    return {
+      success: false,
+      message: "User not found",
+    };
+
+  const workspace = await getWorkspace(workspaceId);
+
+  if (!workspace)
+    return {
+      success: false,
+      message: "Workspace not found",
+    };
+
+  const isInWorkspace = await getUserFromWorkspace(workspaceId, target.id);
+
+  if (isInWorkspace)
+    return {
+      success: false,
+      message: "User is already in the workspace",
+    };
+
+  const hasPendingInvite = await hasPendingInviteToWorkspace(
+    workspaceId,
+    target.id
+  );
+
+  if (hasPendingInvite)
+    return {
+      success: false,
+      message: "User already has a pending invitation to the workspace",
+    };
+
+  const inviteId = generateId();
+
+  await sql`INSERT INTO workspace_invites (id, workspace_id, user_id, role) VALUES (${inviteId}, ${workspaceId}, ${target.id}, ${role})`;
+  await sendEmail({
+    to: target.email,
+    subject: "You have been invited to a workspace",
+    text: `You have been invited to join the workspace ${workspace.name}. Click on the link to accept the invite: ${process.env.DOMAIN}/workspace/${workspaceId}/invite/${inviteId}`,
+  });
+
+  return {
+    success: true,
+    message:
+      "The invitation has been sent to the user email, they will be able to join the workspace once they accept the invitation",
+  };
+}
+
+export async function hasPendingInviteToWorkspace(
+  workspaceId: string,
+  userId: string
+) {
+  const response =
+    await sql`SELECT * FROM workspace_invites WHERE workspace_id = ${workspaceId} AND user_id = ${userId} LIMIT 1`;
+
+  return response.length > 0;
 }
 
 export async function isWorkspaceAdmin(workspaceId: string, userId: string) {
