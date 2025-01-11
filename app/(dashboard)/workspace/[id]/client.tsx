@@ -77,7 +77,7 @@ export default function WorkspaceClient({
   };
 
   return (
-    <div className="flex flex-col items-center space-y-4 container">
+    <div className="flex flex-col items-center space-y-4 w-full">
       <div className="w-3/4 flex flex-col lg:flex-row items-center justify-between py-4 space-y-4 lg:space-y-0 lg:space-x-2">
         <div className="flex items-center space-x-4">
           <Avatar
