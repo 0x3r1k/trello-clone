@@ -48,7 +48,7 @@ export function SignUpForm({
                 <FormControl>
                   <Input
                     type={
-                      field.includes("password")
+                      field === "password" || field === "confirmPassword"
                         ? "password"
                         : field === "email"
                         ? "email"
