@@ -12,6 +12,8 @@
     "@better-fetch/fetch": "^1.1.12",
     "@fivemanage/sdk": "^1.0.0",
     "@hookform/resolvers": "^3.9.1",
+    "@liveblocks/client": "^2.15.2",
+    "@liveblocks/react": "^2.15.2",
     "@neondatabase/serverless": "^0.10.4",
     "@radix-ui/react-avatar": "^1.1.2",
     "@radix-ui/react-checkbox": "^1.1.3",

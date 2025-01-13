@@ -17,6 +17,12 @@ importers:
       '@hookform/resolvers':
         specifier: ^3.9.1
         version: 3.9.1(react-hook-form@7.54.2(react@19.0.0))
+      '@liveblocks/client':
+        specifier: ^2.15.2
+        version: 2.15.2
+      '@liveblocks/react':
+        specifier: ^2.15.2
+        version: 2.15.2(react@19.0.0)
       '@neondatabase/serverless':
         specifier: ^0.10.4
         version: 0.10.4
@@ -382,6 +388,17 @@ packages:
 
   '@levischuck/tiny-cbor@0.2.2':
     resolution: {integrity: sha512-f5CnPw997Y2GQ8FAvtuVVC19FX8mwNNC+1XJcIi16n/LTJifKO6QBgGLgN3YEmqtGMk17SKSuoWES3imJVxAVw==}
+
+  '@liveblocks/client@2.15.2':
+    resolution: {integrity: sha512-6N6EmKaJ8wYZ4WelHdKUEel1AYamFcHo3F23es8kbZXcGmThxOdae2upRplF1i/vtaCVKsbAAuhPNVpWqh887Q==}
+
+  '@liveblocks/core@2.15.2':
+    resolution: {integrity: sha512-t2k5tTSkWgwQyfc4BRuu+ZXW8gX0epo+h2NE2C571i4ascQHZw3g4giD+pPQ+9tW0k3FGBqV841ZdDN+db7wfQ==}
+
+  '@liveblocks/react@2.15.2':
+    resolution: {integrity: sha512-UC/s6sysb1aMlBaeoLas/hSAmURIxgi8n1xSSGh7FAlF88all8vhT47RfXt9Y1VLmfD3EEmBeH3DnNSWw89dSg==}
+    peerDependencies:
+      react: ^18 || ^19 || ^19.0.0-rc
 
   '@neondatabase/serverless@0.10.4':
     resolution: {integrity: sha512-2nZuh3VUO9voBauuh+IGYRhGU/MskWHt1IuZvHcJw6GLjDgtqj/KViKo7SIrLdGLdot7vFbiRRw+BgEy3wT9HA==}
@@ -3150,6 +3167,18 @@ snapshots:
       '@jridgewell/sourcemap-codec': 1.5.0
 
   '@levischuck/tiny-cbor@0.2.2': {}
+
+  '@liveblocks/client@2.15.2':
+    dependencies:
+      '@liveblocks/core': 2.15.2
+
+  '@liveblocks/core@2.15.2': {}
+
+  '@liveblocks/react@2.15.2(react@19.0.0)':
+    dependencies:
+      '@liveblocks/client': 2.15.2
+      '@liveblocks/core': 2.15.2
+      react: 19.0.0
 
   '@neondatabase/serverless@0.10.4':
     dependencies:
