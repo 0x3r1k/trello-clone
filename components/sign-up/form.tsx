@@ -42,7 +42,9 @@ export function SignUpForm({
             render={({ field: fieldProps }) => (
               <FormItem>
                 <FormLabel>
-                  {field.charAt(0).toUpperCase() + field.slice(1)}
+                  {field === "confirmPassword"
+                    ? "Confirm Password"
+                    : field.charAt(0).toUpperCase() + field.slice(1)}
                 </FormLabel>
 
                 <FormControl>
@@ -54,7 +56,9 @@ export function SignUpForm({
                         ? "email"
                         : "text"
                     }
-                    placeholder={`Enter your ${field}`}
+                    placeholder={`Enter your ${
+                      field === "confirmPassword" ? "password again" : field
+                    }`}
                     {...fieldProps}
                     autoComplete="off"
                   />
