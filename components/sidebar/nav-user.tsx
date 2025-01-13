@@ -82,7 +82,7 @@ export function NavUser({ user }: { user: Session["user"] }) {
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-              <Link href="/profile">
+              <Link href="/profile" prefetch={true}>
                 <DropdownMenuItem>
                   <BadgeCheck />
                   Account

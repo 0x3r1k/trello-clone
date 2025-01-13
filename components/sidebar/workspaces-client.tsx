@@ -52,7 +52,7 @@ export function WorkspacesClient({ workspaces }: { workspaces: Workspace[] }) {
                       isActive={pathname.includes(`/workspace/${item.id}`)}
                     >
                       {state === "collapsed" ? (
-                        <Link href={`/workspace/${item.id}`}>
+                        <Link href={`/workspace/${item.id}`} prefetch={true}>
                           <WorkspaceCard item={item} />
                         </Link>
                       ) : (
@@ -71,7 +71,9 @@ export function WorkspacesClient({ workspaces }: { workspaces: Workspace[] }) {
                         }
                         asChild
                       >
-                        <Link href={`/workspace/${item.id}`}>Boards</Link>
+                        <Link href={`/workspace/${item.id}`} prefetch={true}>
+                          Boards
+                        </Link>
                       </SidebarMenuSubButton>
 
                       <SidebarMenuSubButton
@@ -80,7 +82,10 @@ export function WorkspacesClient({ workspaces }: { workspaces: Workspace[] }) {
                         )}
                         asChild
                       >
-                        <Link href={`/workspace/${item.id}/members`}>
+                        <Link
+                          href={`/workspace/${item.id}/members`}
+                          prefetch={true}
+                        >
                           Members
                         </Link>
                       </SidebarMenuSubButton>
@@ -91,7 +96,10 @@ export function WorkspacesClient({ workspaces }: { workspaces: Workspace[] }) {
                         )}
                         asChild
                       >
-                        <Link href={`/workspace/${item.id}/settings`}>
+                        <Link
+                          href={`/workspace/${item.id}/settings`}
+                          prefetch={true}
+                        >
                           Settings
                         </Link>
                       </SidebarMenuSubButton>

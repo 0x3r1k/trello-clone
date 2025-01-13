@@ -24,7 +24,7 @@ export function NavMain() {
     <SidebarMenu className="mb-2">
       {items.map((item) => (
         <SidebarMenuItem key={item.title}>
-          <Link href={item.href}>
+          <Link href={item.href} prefetch={true}>
             <SidebarMenuButton
               tooltip={item.title}
               isActive={pathname === item.href}

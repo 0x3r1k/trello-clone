@@ -9,6 +9,7 @@ export default async function EmailVerifiedPage() {
 
       <Link
         href="/boards"
+        prefetch={true}
         className={buttonVariants({
           variant: "default",
         })}
