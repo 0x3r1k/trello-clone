@@ -3,7 +3,9 @@
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 
-import { getWorkspace, getBoards, isWorkspaceAdmin } from "@/actions/workspace";
+import { getWorkspace, isWorkspaceAdmin } from "@/actions/workspace";
+import { getBoards } from "@/actions/board";
+
 import { WorkspaceClient, WorkspaceClientSkeleton } from "./client";
 import { Suspense } from "react";
 
