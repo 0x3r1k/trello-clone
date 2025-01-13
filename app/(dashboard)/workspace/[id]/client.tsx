@@ -39,6 +39,7 @@ import { updateWorkspaceName } from "@/actions/workspace";
 
 import { motion } from "motion/react";
 import { BACKGROUNDS } from "@/lib/backgrounds";
+import Link from "next/link";
 
 export default function WorkspaceClient({
   workspace,
@@ -324,27 +325,28 @@ export default function WorkspaceClient({
               return 0;
             })
             .map((board) => (
-              <div
-                key={board.id}
-                className={`relative flex flex-col w-full h-24 p-2 rounded-sm cursor-pointer ${
-                  board.background
-                    ? `bg-${board.background}-500`
-                    : "bg-sidebar-foreground/10"
-                }`}
-                onMouseEnter={() => setBoardHover(board.id)}
-                onMouseLeave={() => setBoardHover("")}
-              >
-                <span className="text-lg font-semibold">{board.name}</span>
-
-                <motion.div
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: boardHover === board.id ? 1 : 0 }}
+              <Link href={`/boards/${board.id}`} prefetch={true} key={board.id}>
+                <div
+                  className={`relative flex flex-col w-full h-24 p-2 rounded-sm cursor-pointer ${
+                    board.background
+                      ? `bg-${board.background}-500`
+                      : "bg-sidebar-foreground/10"
+                  }`}
+                  onMouseEnter={() => setBoardHover(board.id)}
+                  onMouseLeave={() => setBoardHover("")}
                 >
-                  <span className="text-sm text-sidebar-foreground/60 absolute bottom-1.5 right-0.5 hover:text-primary">
-                    <Star className="w-4 h-4 mr-1" />
-                  </span>
-                </motion.div>
-              </div>
+                  <span className="text-lg font-semibold">{board.name}</span>
+
+                  <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: boardHover === board.id ? 1 : 0 }}
+                  >
+                    <span className="text-sm text-sidebar-foreground/60 absolute bottom-1.5 right-0.5 hover:text-primary">
+                      <Star className="w-4 h-4 mr-1" />
+                    </span>
+                  </motion.div>
+                </div>
+              </Link>
             ))}
 
           <Popover
