@@ -33,9 +33,12 @@ import { useToast } from "@/hooks/use-toast";
 import { useRouter } from "next/navigation";
 
 import { Check, Pen, UserPlus, X, Star } from "lucide-react";
+
+import { createBoard } from "@/actions/board";
 import { updateWorkspaceName } from "@/actions/workspace";
 
 import { motion } from "motion/react";
+import { BACKGROUNDS } from "@/lib/backgrounds";
 
 export default function WorkspaceClient({
   workspace,
@@ -61,10 +64,13 @@ export default function WorkspaceClient({
   const [filterBy, setFilterBy] = useState("all");
   const [search, setSearch] = useState("");
 
+  const [boardDialogOpen, setBoardDialogOpen] = useState(false);
+  const [loadingBoard, setLoadingBoard] = useState(false);
   const [boardHover, setBoardHover] = useState<string>("");
   const [newBoardData, setNewBoardData] = useState({
     name: "",
     visibility: "private",
+    background: "blue",
   });
 
   const saveWorkspace = async () => {
@@ -78,6 +84,28 @@ export default function WorkspaceClient({
 
     setEditMode(false);
     setLoading(false);
+
+    if (success) {
+      toast({ title: "Success", description: message });
+    } else {
+      toast({ title: "Error", description: message, variant: "destructive" });
+    }
+
+    router.refresh();
+  };
+
+  const handleCreateBoard = async () => {
+    setLoadingBoard(true);
+
+    const { success, message } = await createBoard({
+      workspaceId: workspace.id,
+      name: newBoardData.name,
+      visibility: newBoardData.visibility as "public" | "private",
+      background: newBoardData.background,
+    });
+
+    setLoadingBoard(false);
+    setBoardDialogOpen(false);
 
     if (success) {
       toast({ title: "Success", description: message });
@@ -298,7 +326,11 @@ export default function WorkspaceClient({
             .map((board) => (
               <div
                 key={board.id}
-                className="relative flex flex-col w-44 h-20 p-2 rounded-sm cursor-pointer bg-sidebar-foreground/10"
+                className={`relative flex flex-col w-72 h-24 p-2 rounded-sm cursor-pointer ${
+                  board.background
+                    ? `bg-${board.background}-500`
+                    : "bg-sidebar-foreground/10"
+                }`}
                 onMouseEnter={() => setBoardHover(board.id)}
                 onMouseLeave={() => setBoardHover("")}
               >
@@ -316,13 +348,19 @@ export default function WorkspaceClient({
             ))}
 
           <Popover
-            onOpenChange={() =>
-              setNewBoardData({ name: "", visibility: "private" })
-            }
+            open={boardDialogOpen}
+            onOpenChange={() => {
+              setBoardDialogOpen(!boardDialogOpen);
+              setNewBoardData({
+                name: "",
+                visibility: "private",
+                background: "blue",
+              });
+            }}
           >
             <PopoverTrigger asChild>
               <Button
-                className="flex flex-col w-44 h-20 p-2 rounded-sm bg-sidebar-foreground/10 text-sm text-primary"
+                className="flex flex-col w-72 h-24 p-2 rounded-sm bg-sidebar-foreground/10 text-sm text-primary"
                 variant="ghost"
               >
                 Create new board
@@ -347,10 +385,7 @@ export default function WorkspaceClient({
                   />
                 </div>
 
-                <div
-                  className="flex flex-col space-y-2"
-                  suppressHydrationWarning
-                >
+                <div className="flex flex-col space-y-2">
                   <Label>Visibility</Label>
 
                   <Select
@@ -372,12 +407,36 @@ export default function WorkspaceClient({
                   </Select>
                 </div>
 
-                <Button
+                <div className="flex flex-col space-y-2">
+                  <Label>Background</Label>
+
+                  <div className="flex flex-row flex-wrap space-x-2 w-full">
+                    {BACKGROUNDS.map((backgroundColor: string) => (
+                      <div
+                        key={backgroundColor}
+                        className={`w-10 h-6 rounded-sm cursor-pointer ${
+                          newBoardData.background === backgroundColor &&
+                          "ring-1 ring-primary"
+                        } bg-${backgroundColor}-500`}
+                        onClick={() =>
+                          setNewBoardData({
+                            ...newBoardData,
+                            background: backgroundColor,
+                          })
+                        }
+                      />
+                    ))}
+                  </div>
+                </div>
+
+                <LoadingButton
                   className="bg-blue-500 hover:bg-blue-400"
+                  onClick={handleCreateBoard}
+                  pending={loadingBoard}
                   disabled={!newBoardData.name}
                 >
                   Create
-                </Button>
+                </LoadingButton>
               </div>
             </PopoverContent>
           </Popover>
