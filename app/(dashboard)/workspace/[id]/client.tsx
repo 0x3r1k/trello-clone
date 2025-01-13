@@ -284,7 +284,7 @@ export default function WorkspaceClient({
           </div>
         </div>
 
-        <div className="flex flex-row space-y-4 lg:space-y-0 lg:space-x-4 flex-wrap">
+        <div className="grid grid-cols-1 lg:grid-cols-3 xl:grid-cols-4 gap-4 w-full">
           {boards
             .filter(() => {
               // if (filterBy === "active") {
@@ -326,7 +326,7 @@ export default function WorkspaceClient({
             .map((board) => (
               <div
                 key={board.id}
-                className={`relative flex flex-col w-72 h-24 p-2 rounded-sm cursor-pointer ${
+                className={`relative flex flex-col w-full h-24 p-2 rounded-sm cursor-pointer ${
                   board.background
                     ? `bg-${board.background}-500`
                     : "bg-sidebar-foreground/10"
@@ -360,7 +360,7 @@ export default function WorkspaceClient({
           >
             <PopoverTrigger asChild>
               <Button
-                className="flex flex-col w-72 h-24 p-2 rounded-sm bg-sidebar-foreground/10 text-sm text-primary"
+                className="flex flex-col w-full h-24 p-2 rounded-sm bg-sidebar-foreground/10 text-sm text-primary"
                 variant="ghost"
               >
                 Create new board
