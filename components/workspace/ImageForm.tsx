@@ -42,6 +42,32 @@ export default function WorkspaceImageForm({
     let newUrl: string = tabUrl;
     let fmId: string | undefined;
 
+    if (tabType === "url") {
+      if (!tabUrl || tabUrl.length === 0) {
+        toast({
+          title: "Error",
+          description: "Please provide a valid URL",
+          variant: "destructive",
+        });
+
+        setLoadingImageSave(false);
+
+        return;
+      }
+    } else {
+      if (!tabFile || tabFile.size === 0) {
+        toast({
+          title: "Error",
+          description: "Please provide a valid file",
+          variant: "destructive",
+        });
+
+        setLoadingImageSave(false);
+
+        return;
+      }
+    }
+
     if (tabType === "file" && tabFile) {
       const file = new Blob([tabFile], {
         type: tabFile.type,
