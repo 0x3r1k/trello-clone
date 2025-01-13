@@ -4,15 +4,10 @@ import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 
 import { getWorkspace, getBoards, isWorkspaceAdmin } from "@/actions/workspace";
-import WorkspaceClient from "./client";
+import { WorkspaceClient, WorkspaceClientSkeleton } from "./client";
+import { Suspense } from "react";
 
-export default async function WorkspacePage({
-  params,
-}: {
-  params: Promise<{ id: string }>;
-}) {
-  const { id } = await params;
-
+async function Workspace({ id }: { id: string }) {
   const session = await auth.api.getSession({
     headers: await headers(),
   });
@@ -23,5 +18,19 @@ export default async function WorkspacePage({
 
   return (
     <WorkspaceClient workspace={workspace} boards={boards} isAdmin={isAdmin} />
+  );
+}
+
+export default async function WorkspacePage({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  const { id } = await params;
+
+  return (
+    <Suspense fallback={<WorkspaceClientSkeleton />}>
+      <Workspace id={id} />
+    </Suspense>
   );
 }

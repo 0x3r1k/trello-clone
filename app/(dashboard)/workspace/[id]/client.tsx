@@ -41,7 +41,7 @@ import { motion } from "motion/react";
 import { BACKGROUNDS } from "@/lib/backgrounds";
 import Link from "next/link";
 
-export default function WorkspaceClient({
+export function WorkspaceClient({
   workspace,
   boards,
   isAdmin,
@@ -442,6 +442,63 @@ export default function WorkspaceClient({
               </div>
             </PopoverContent>
           </Popover>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export function WorkspaceClientSkeleton() {
+  return (
+    <div className="flex flex-col items-center space-y-4 w-full">
+      <div className="w-3/4 flex flex-col lg:flex-row items-center justify-between py-4 space-y-4 lg:space-y-0 lg:space-x-2">
+        <div className="flex items-center space-x-4">
+          <Avatar className="h-16 w-16 rounded-lg">
+            <AvatarFallback className="rounded-lg bg-sidebar-foreground/10 text-sidebar-foreground text-2xl">
+              W
+            </AvatarFallback>
+          </Avatar>
+
+          <div className="flex flex-col space-y-2">
+            <div className="flex items-center space-x-2">
+              <div className="w-36 h-6 bg-sidebar-foreground/10 rounded-md" />
+            </div>
+
+            <div className="w-24 h-4 bg-sidebar-foreground/10 rounded-md" />
+          </div>
+        </div>
+
+        <div className="w-36 h-10 bg-sidebar-foreground/10 rounded-md" />
+      </div>
+
+      <Separator />
+
+      <div className="w-full flex flex-col space-y-4">
+        <span className="text-lg font-semibold">Boards</span>
+
+        <div className="flex flex-col lg:flex-row items-center justify-between space-y-4 lg:space-y-0">
+          <div className="flex flex-col lg:flex-row items-center space-x-0 lg:space-x-2 space-y-4 lg:space-y-0 w-full lg:w-fit">
+            <div className="flex flex-col space-y-2 w-full">
+              <div className="w-72 h-10 bg-sidebar-foreground/10 rounded-md" />
+            </div>
+
+            <div className="flex flex-col space-y-2 w-full">
+              <div className="w-72 h-10 bg-sidebar-foreground/10 rounded-md" />
+            </div>
+          </div>
+
+          <div className="flex flex-col space-y-2 w-full lg:w-fit">
+            <div className="w-72 h-10 bg-sidebar-foreground/10 rounded-md" />
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-3 xl:grid-cols-4 gap-4 w-full">
+          {[...Array(6)].map((_, i) => (
+            <div
+              key={i}
+              className="w-full h-24 p-2 rounded-sm bg-sidebar-foreground/10"
+            />
+          ))}
         </div>
       </div>
     </div>

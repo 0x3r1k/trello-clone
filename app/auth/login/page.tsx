@@ -45,7 +45,7 @@ export default function SignInPage() {
   });
 
   const handleCredentialsSignIn = async (
-    values: z.infer<typeof signInSchema>,
+    values: z.infer<typeof signInSchema>
   ) => {
     await authClient.signIn.email(
       {
@@ -67,7 +67,7 @@ export default function SignInPage() {
             variant: "destructive",
           });
         },
-      },
+      }
     );
 
     setPending(false);
@@ -93,7 +93,7 @@ export default function SignInPage() {
             variant: "destructive",
           });
         },
-      },
+      }
     );
 
     setPendingGoogle(false);
@@ -119,7 +119,7 @@ export default function SignInPage() {
             variant: "destructive",
           });
         },
-      },
+      }
     );
 
     setPendingGithub(false);
@@ -164,7 +164,7 @@ export default function SignInPage() {
                   key={field}
                   name={field as keyof z.infer<typeof signInSchema>}
                   render={({ field: fieldProps }) => (
-                    <FormItem>
+                    <FormItem className="space-y-1">
                       <FormLabel>
                         {field.charAt(0).toUpperCase() + field.slice(1)}
                       </FormLabel>

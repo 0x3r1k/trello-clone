@@ -40,7 +40,7 @@ export function SignUpForm({
             key={field}
             name={field as keyof z.infer<typeof signUpSchema>}
             render={({ field: fieldProps }) => (
-              <FormItem>
+              <FormItem className="space-y-1">
                 <FormLabel>
                   {field === "confirmPassword"
                     ? "Confirm Password"
