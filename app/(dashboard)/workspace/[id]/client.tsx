@@ -19,17 +19,23 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+
 import LoadingButton from "@/components/loading-button";
 import WorkspaceImageForm from "@/components/workspace/ImageForm";
+import InviteMemberForm from "@/components/workspace/InviteMemberForm";
 
 import { useToast } from "@/hooks/use-toast";
 import { useRouter } from "next/navigation";
 
-import { Check, Pen, UserPlus, X } from "lucide-react";
+import { Check, Pen, UserPlus, X, Star } from "lucide-react";
 import { updateWorkspaceName } from "@/actions/workspace";
 
 import { motion } from "motion/react";
-import InviteMemberForm from "@/components/workspace/InviteMemberForm";
 
 export default function WorkspaceClient({
   workspace,
@@ -54,6 +60,12 @@ export default function WorkspaceClient({
   const [sortBy, setSortBy] = useState("recent");
   const [filterBy, setFilterBy] = useState("all");
   const [search, setSearch] = useState("");
+
+  const [boardHover, setBoardHover] = useState<string>("");
+  const [newBoardData, setNewBoardData] = useState({
+    name: "",
+    visibility: "private",
+  });
 
   const saveWorkspace = async () => {
     if (workspace.name === workspaceName) return;
@@ -244,7 +256,7 @@ export default function WorkspaceClient({
           </div>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+        <div className="flex flex-row space-y-4 lg:space-y-0 lg:space-x-4 flex-wrap">
           {boards
             .filter(() => {
               // if (filterBy === "active") {
@@ -286,11 +298,89 @@ export default function WorkspaceClient({
             .map((board) => (
               <div
                 key={board.id}
-                className="flex flex-col p-4 rounded-lg bg-sidebar-foreground/10"
+                className="relative flex flex-col w-44 h-20 p-2 rounded-sm cursor-pointer bg-sidebar-foreground/10"
+                onMouseEnter={() => setBoardHover(board.id)}
+                onMouseLeave={() => setBoardHover("")}
               >
                 <span className="text-lg font-semibold">{board.name}</span>
+
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: boardHover === board.id ? 1 : 0 }}
+                >
+                  <span className="text-sm text-sidebar-foreground/60 absolute bottom-1.5 right-0.5 hover:text-primary">
+                    <Star className="w-4 h-4 mr-1" />
+                  </span>
+                </motion.div>
               </div>
             ))}
+
+          <Popover
+            onOpenChange={() =>
+              setNewBoardData({ name: "", visibility: "private" })
+            }
+          >
+            <PopoverTrigger asChild>
+              <Button
+                className="flex flex-col w-44 h-20 p-2 rounded-sm bg-sidebar-foreground/10 text-sm text-primary"
+                variant="ghost"
+              >
+                Create new board
+              </Button>
+            </PopoverTrigger>
+
+            <PopoverContent>
+              <div className="flex flex-col space-y-4">
+                <span className="text-sm font-semibold text-center text-primary">
+                  Create board
+                </span>
+
+                <div className="flex flex-col space-y-2">
+                  <Label>Board name</Label>
+                  <Input
+                    type="text"
+                    placeholder="Board name"
+                    value={newBoardData.name}
+                    onChange={(e) =>
+                      setNewBoardData({ ...newBoardData, name: e.target.value })
+                    }
+                  />
+                </div>
+
+                <div
+                  className="flex flex-col space-y-2"
+                  suppressHydrationWarning
+                >
+                  <Label>Visibility</Label>
+
+                  <Select
+                    value={newBoardData.visibility}
+                    onValueChange={(e) =>
+                      setNewBoardData({ ...newBoardData, visibility: e })
+                    }
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Private" />
+                    </SelectTrigger>
+
+                    <SelectContent>
+                      <SelectGroup>
+                        <SelectItem value="private">Private</SelectItem>
+                        <SelectItem value="public">Public</SelectItem>
+                      </SelectGroup>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <Button
+                  className="bg-blue-500 hover:bg-blue-400"
+                  disabled={!newBoardData.name}
+                >
+                  Create
+                </Button>
+              </div>
+            </PopoverContent>
+          </Popover>
         </div>
       </div>
     </div>
