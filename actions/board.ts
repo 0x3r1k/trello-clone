@@ -3,6 +3,8 @@
 import { neon } from "@neondatabase/serverless";
 import { generateId } from "better-auth";
 
+import { Board } from "@/types/board";
+
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 
@@ -45,4 +47,16 @@ export async function createBoard({
     success: true,
     message: "Board created",
   };
+}
+
+export async function getBoards(id: string) {
+  const response = await sql`SELECT * FROM board WHERE workspace_id = ${id}`;
+
+  return response as Board[];
+}
+
+export async function getBoard(id: string) {
+  const response = await sql`SELECT * FROM board WHERE id = ${id} LIMIT 1`;
+
+  return response[0] as Board;
 }
