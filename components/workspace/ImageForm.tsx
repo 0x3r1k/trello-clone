@@ -78,7 +78,7 @@ export default function WorkspaceImageForm({
 
   return (
     <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-      <DialogContent>
+      <DialogContent className="max-w-sm md:max-w-md">
         <DialogHeader>
           <DialogTitle>Change Workspace Image</DialogTitle>
           <DialogDescription>

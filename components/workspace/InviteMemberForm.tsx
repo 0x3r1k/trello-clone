@@ -66,7 +66,7 @@ export default function InviteMemberForm({
 
   return (
     <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-      <DialogContent>
+      <DialogContent className="max-w-sm md:max-w-md">
         <DialogHeader>
           <DialogTitle>Invite Member</DialogTitle>
           <DialogDescription>
