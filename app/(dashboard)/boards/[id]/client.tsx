@@ -7,6 +7,7 @@ import {
   useOthers,
   useUpdateMyPresence,
 } from "@liveblocks/react/suspense";
+import { LiveList } from "@liveblocks/client";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -18,16 +19,47 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Board } from "@/types/board";
 
-export default function BoardClient({ board }: { board: Board }) {
+import { Board, List, Card } from "@/types/board";
+import { useMutation, useStorage } from "@liveblocks/react";
+import { Separator } from "@/components/ui/separator";
+
+export default function BoardClient({
+  board,
+}: {
+  board: Board;
+  lists: List[];
+  cards: Card[];
+}) {
   return (
     <LiveblocksProvider
       publicApiKey={
         "pk_prod_OiIgwg5Ntsx2cX_7g3hPv9zNtDwIrAMAokIfwowfN2INJU1nGyRdpAi7yT_qE7bX"
       }
     >
-      <RoomProvider id={`board-${board.id}`}>
+      <RoomProvider
+        id={`board-${board.id}`}
+        initialStorage={{
+          // @ts-expect-error - We're not using the full board object
+          lists: new LiveList([
+            {
+              id: "Hda21",
+              name: "To do",
+              position: 1,
+              board_id: board.id,
+            },
+          ]),
+          // @ts-expect-error - We're not using the full cards object
+          cards: new LiveList([
+            {
+              id: "Hda21",
+              name: "To do",
+              position: 1,
+              list_id: "Hda21",
+            },
+          ]),
+        }}
+      >
         <ClientSideSuspense fallback={<div>Loading…</div>}>
           <TodoList />
         </ClientSideSuspense>
@@ -47,9 +79,36 @@ function WhoIsHere() {
 function TodoList() {
   const updateMyPresence = useUpdateMyPresence();
 
+  const lists = useStorage((root) => root.lists);
+  const cards = useStorage((root) => root.cards);
+
+  const addList = useMutation(
+    ({ storage }, { id, title, position, board_id }) => {
+      storage.get("lists").push({ id, title, position, board_id });
+    },
+    []
+  );
+
   return (
     <div className="container">
       <WhoIsHere />
+
+      {JSON.stringify(lists)}
+      <Separator />
+      {JSON.stringify(cards)}
+
+      <Button
+        onClick={() =>
+          addList({
+            id: "2k1nX",
+            title: "Test",
+            position: 1,
+            board_id: "2k1nX",
+          })
+        }
+      >
+        Test
+      </Button>
 
       <Dialog
         onOpenChange={(isOpen) =>

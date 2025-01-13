@@ -13,7 +13,7 @@ export default async function BoardIdPage({
 
   return (
     <div>
-      <BoardClient board={boardInfo} />
+      <BoardClient board={boardInfo} lists={[]} cards={[]} />
     </div>
   );
 }

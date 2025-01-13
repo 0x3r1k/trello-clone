@@ -1,4 +1,8 @@
 // Define Liveblocks types for your application
+
+import { LiveList } from "@liveblocks/client";
+import { Card, List } from "@/types/board";
+
 // https://liveblocks.io/docs/api-reference/liveblocks-react#Typing-your-data
 declare global {
   interface Liveblocks {
@@ -10,8 +14,8 @@ declare global {
 
     // The Storage tree for the room, for useMutation, useStorage, etc.
     Storage: {
-      // Example, a conflict-free list
-      // animals: LiveList<string>;
+      lists: LiveList<List>;
+      cards: LiveList<Card>;
     };
 
     // Custom user info set when authenticating with a secret key
