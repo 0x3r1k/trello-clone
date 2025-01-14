@@ -140,7 +140,7 @@ function BoardLists({ board }: { board: Board }) {
             className="bg-sidebar-primary/20 h-auto w-full p-2.5 rounded cursor-pointer transition-all hover:bg-sidebar-primary text-primary text-sm font-semibold"
             onClick={() => setNewList(true)}
           >
-            Add a list
+            + Add another list
           </div>
         )}
       </div>
@@ -207,9 +207,10 @@ function List({ list, cards }: { list: List; cards?: Card[] }) {
       )}
 
       <div className="mt-2 space-y-2">
-        {cards?.map((card, index) => (
-          <Card key={index} card={card} />
-        ))}
+        {cards &&
+          cards
+            .sort((a, b) => a.position - b.position)
+            .map((card, index) => <Card key={index} card={card} />)}
 
         {newCard ? (
           <Input
@@ -241,7 +242,7 @@ function List({ list, cards }: { list: List; cards?: Card[] }) {
 
 function Card({ card }: { card: Card }) {
   return (
-    <div className="bg-sidebar-primary rounded p-2 cursor-pointer transition-all hover:bg-sidebar-primary/70 text-primary text-sm font-semibold">
+    <div className="bg-sidebar-primary rounded p-2 cursor-pointer transition-all hover:bg-sidebar-primary/70 text-primary text-sm font-normal">
       {card.title}
     </div>
   );
