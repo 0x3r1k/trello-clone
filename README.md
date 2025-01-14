@@ -1,1 +1,1 @@
-Un Trello para practicas
+Un Trello para practicar un poco
