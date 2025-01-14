@@ -1,7 +1,24 @@
 "use server";
 
-import BoardClient from "./client";
-import { getBoard } from "@/actions/board";
+import { Suspense } from "react";
+import { BoardClient, BoardClientSkeleton } from "./client";
+import { getBoard, getBoardLists, getBoardCards } from "@/actions/board";
+
+async function BoardServerPage({ id }: { id: string }) {
+  const boardInfo = await getBoard(id);
+  const boardLists = await getBoardLists(id);
+  const boardCards = await getBoardCards(id);
+
+  return (
+    <div>
+      <BoardClient
+        board={boardInfo}
+        initialLists={boardLists}
+        initialCards={boardCards}
+      />
+    </div>
+  );
+}
 
 export default async function BoardIdPage({
   params,
@@ -9,11 +26,10 @@ export default async function BoardIdPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const boardInfo = await getBoard(id);
 
   return (
-    <div>
-      <BoardClient board={boardInfo} lists={[]} cards={[]} />
-    </div>
+    <Suspense fallback={<BoardClientSkeleton />}>
+      <BoardServerPage id={id} />
+    </Suspense>
   );
 }

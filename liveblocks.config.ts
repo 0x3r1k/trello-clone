@@ -1,7 +1,16 @@
+/* eslint-disable @typescript-eslint/no-empty-object-type */
 // Define Liveblocks types for your application
 
-import { LiveList } from "@liveblocks/client";
+import { createClient, LiveList } from "@liveblocks/client";
+import { createRoomContext } from "@liveblocks/react";
+
 import { Card, List } from "@/types/board";
+
+const client = createClient({
+  publicApiKey:
+    "pk_prod_OiIgwg5Ntsx2cX_7g3hPv9zNtDwIrAMAokIfwowfN2INJU1nGyRdpAi7yT_qE7bX",
+  throttle: 100,
+});
 
 // https://liveblocks.io/docs/api-reference/liveblocks-react#Typing-your-data
 declare global {
@@ -50,4 +59,33 @@ declare global {
   }
 }
 
-export {};
+type Presence = {
+  boardId?: string;
+  listId?: string;
+};
+
+type Storage = {
+  lists: LiveList<List>;
+  cards: LiveList<Card>;
+};
+
+interface UserMeta {
+  id: string;
+}
+
+type RoomEvent = {};
+type ThreadMetadata = {};
+
+export const {
+  RoomProvider,
+  useMyPresence,
+  useUpdateMyPresence,
+  useStorage,
+  useMutation,
+  useRoom,
+  useSelf,
+  useOthers,
+  useThreads,
+} = createRoomContext<Presence, Storage, UserMeta, RoomEvent, ThreadMetadata>(
+  client
+);

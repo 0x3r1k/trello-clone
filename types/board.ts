@@ -17,9 +17,9 @@ export type List = {
 export type Card = {
   id: string;
   title: string;
-  description: string;
-  members: string[];
-  labels: string[];
+  description?: string;
+  members?: string[];
+  labels?: string[];
   position: number;
   board_id: string;
   list_id: string;
