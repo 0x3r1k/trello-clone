@@ -14,6 +14,10 @@ import { Board } from "@/types/board";
 import type { List, Card } from "@/types/board";
 
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Button } from "@/components/ui/button";
+import LoadingButton from "@/components/loading-button";
+import { Check, X } from "lucide-react";
 
 import {
   addCard as addCardAction,
@@ -22,7 +26,7 @@ import {
 
 export function BoardClientSkeleton() {
   return (
-    <div className="flex flex-row w-full h-full space-x-4 max-h-full overflow-auto">
+    <div className="flex flex-row w-full h-auto space-x-4 overflow-auto">
       {[1, 2, 3, 4].map((_, index) => (
         <div
           key={index}
@@ -108,7 +112,7 @@ function BoardLists({ board }: { board: Board }) {
   };
 
   return (
-    <div className="flex flex-row w-full h-auto space-x-4 max-h-full overflow-auto">
+    <div className="flex flex-row w-full h-auto space-x-4 max-h-full overflow-x-auto">
       {lists?.map((list, index) => (
         <List
           key={index}
@@ -154,6 +158,7 @@ function List({ list, cards }: { list: List; cards?: Card[] }) {
 
   const [newCard, setNewCard] = useState(false);
   const [newCardTitle, setNewCardTitle] = useState("");
+  const [addingCardPending, setAddingCardPending] = useState(false);
 
   const addCard = useMutation(
     ({ storage }, { id, title, position, list_id }) => {
@@ -168,6 +173,8 @@ function List({ list, cards }: { list: List; cards?: Card[] }) {
     if (newCardTitle.trim() === "") {
       return;
     }
+
+    setAddingCardPending(true);
 
     const { success, id } = await addCardAction({
       title: newCardTitle,
@@ -184,6 +191,7 @@ function List({ list, cards }: { list: List; cards?: Card[] }) {
         list_id: list.id,
       });
 
+    setAddingCardPending(false);
     setNewCard(false);
     setNewCardTitle("");
   };
@@ -194,7 +202,10 @@ function List({ list, cards }: { list: List; cards?: Card[] }) {
         <Input
           value={listTitle}
           onChange={(e) => setListTitle(e.target.value)}
-          onBlur={() => setEditingListTitle(false)}
+          onBlur={() => {
+            setEditingListTitle(false);
+            setListTitle(list.title);
+          }}
           autoFocus
         />
       ) : (
@@ -213,20 +224,36 @@ function List({ list, cards }: { list: List; cards?: Card[] }) {
             .map((card, index) => <Card key={index} card={card} />)}
 
         {newCard ? (
-          <Input
-            value={newCardTitle}
-            onChange={(e) => setNewCardTitle(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === "Enter") {
-                handleAddCard();
-              }
-            }}
-            onBlur={() => {
-              setNewCard(false);
-              setNewCardTitle("");
-            }}
-            autoFocus
-          />
+          <div className="flex flex-row items-center space-x-2">
+            <Textarea
+              placeholder="Enter a title for this card..."
+              value={newCardTitle}
+              onChange={(e) => setNewCardTitle(e.target.value)}
+              readOnly={addingCardPending}
+              autoFocus
+            />
+
+            <div className="flex flex-col items-center space-y-2">
+              <LoadingButton
+                onClick={handleAddCard}
+                pending={addingCardPending}
+                className="w-8 h-8 bg-blue-500 rounded cursor-pointer transition-all hover:bg-blue-600 text-primary text-sm font-semibold"
+              >
+                <Check className="w-4 h-4" />
+              </LoadingButton>
+
+              <Button
+                onClick={() => {
+                  setNewCard(false);
+                  setNewCardTitle("");
+                }}
+                className="w-8 h-8 bg-red-500 rounded cursor-pointer transition-all hover:bg-red-600 text-primary text-sm font-semibold"
+                disabled={addingCardPending}
+              >
+                <X className="w-4 h-4" />
+              </Button>
+            </div>
+          </div>
         ) : (
           <div
             className="bg-sidebar-primary/20 rounded p-2 cursor-pointer transition-all hover:bg-sidebar-primary text-primary text-sm font-semibold"
